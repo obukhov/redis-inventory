@@ -1,4 +1,4 @@
-package aggr
+package trie
 
 import (
 	"github.com/stretchr/testify/suite"

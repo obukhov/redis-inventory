@@ -1,4 +1,4 @@
-package aggr
+package trie
 
 type Splitter interface {
 	Split(in string) []string
