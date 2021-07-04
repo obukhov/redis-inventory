@@ -1,12 +1,17 @@
 package trie
 
 import (
+	"encoding/json"
 	"io"
 )
 
 func NewTrie(splitter Splitter, maxBucketSize uint64) *Trie {
+	node := NewNode("")
+	node.AddAggregator(NewAggregator())
+
 	return &Trie{
-		root:          NewNode(""),
+		root:          node,
+		splitter:      splitter,
 		maxBucketSize: maxBucketSize,
 	}
 }
@@ -21,15 +26,19 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 	curNode := t.root
 	for _, keyPiece := range t.splitter.Split(key) { // change to zero allocation segmenter
 		var nextNode *Node
-		if !curNode.HasChild(keyPiece) { // can be simplified when working directly with map
+
+		if childNode := curNode.GetChild(keyPiece); childNode == nil {
+			if curNode.ChildCount() == 1 {
+				// creating a fork in the trie
+				nextAggregatedNode := curNode.FindNextAggregatedNode()
+				curNode.AddAggregator(nextAggregatedNode.Aggregator().Clone())
+			}
+
 			nextNode = NewNode(keyPiece)
 			curNode.AddChild(keyPiece, nextNode)
-		} else {
-			nextNode = curNode.GetChild(keyPiece)
-		}
 
-		if curNode.IsFork() && !curNode.HasAggregator() { // no need to check if no new child haven't been added
-			curNode.AddAggregator(NewAggregator())
+		} else {
+			nextNode = childNode
 		}
 
 		if curNode.HasAggregator() {
@@ -40,8 +49,14 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 
 		curNode = nextNode
 	}
+
+	curNode.AddAggregator(NewAggregator())
+	for _, p := range paramValues {
+		curNode.Aggregator().Add(p.Param, p.Value)
+	}
 }
 
 func (t *Trie) Dump(w io.Writer) {
-	// Write trie summary
+	e := json.NewEncoder(w)
+	e.Encode(t.root)
 }

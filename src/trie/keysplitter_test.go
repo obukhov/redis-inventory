@@ -11,7 +11,7 @@ type PunctuationSplitterTestSuite struct {
 }
 
 func (suite *PunctuationSplitterTestSuite) SetupTest() {
-	suite.splitter = NewPunctuationSplitter([]rune{'_', ':'})
+	suite.splitter = NewPunctuationSplitter('_', ':')
 }
 
 func (suite *PunctuationSplitterTestSuite) TestSplit() {

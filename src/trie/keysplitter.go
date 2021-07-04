@@ -8,7 +8,7 @@ type PunctuationSplitter struct {
 	dividers map[rune]bool
 }
 
-func NewPunctuationSplitter(punctuation []rune) *PunctuationSplitter {
+func NewPunctuationSplitter(punctuation ...rune) *PunctuationSplitter {
 	m := make(map[rune]bool)
 	for _, r := range punctuation {
 		m[r] = true
