@@ -1,12 +1,7 @@
 package trie
 
-import (
-	"encoding/json"
-	"io"
-)
-
 func NewTrie(splitter Splitter, maxBucketSize uint64) *Trie {
-	node := NewNode("")
+	node := NewNode()
 	node.AddAggregator(NewAggregator())
 
 	return &Trie{
@@ -34,7 +29,7 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 				curNode.AddAggregator(nextAggregatedNode.Aggregator().Clone())
 			}
 
-			nextNode = NewNode(keyPiece)
+			nextNode = NewNode()
 			curNode.AddChild(keyPiece, nextNode)
 
 		} else {
@@ -61,9 +56,4 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 	for _, p := range paramValues {
 		curNode.Aggregator().Add(p.Param, p.Value)
 	}
-}
-
-func (t *Trie) Dump(w io.Writer) {
-	e := json.NewEncoder(w)
-	e.Encode(t.root)
 }

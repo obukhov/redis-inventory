@@ -1,21 +1,15 @@
 package trie
 
-func NewNode(key string) *Node {
+func NewNode() *Node {
 	return &Node{
-		key:      key,
 		Children: make(map[string]*Node),
 		Aggr:     nil,
 	}
 }
 
 type Node struct {
-	key      string
 	Children map[string]*Node `json:"Children,omitempty"`
 	Aggr     *Aggregator      `json:"Values,omitempty"`
-}
-
-func (n *Node) Key() string {
-	return n.key
 }
 
 func (n *Node) HasAggregator() bool {
