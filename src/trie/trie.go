@@ -50,7 +50,14 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 		curNode = nextNode
 	}
 
-	curNode.AddAggregator(NewAggregator())
+	if !curNode.HasAggregator() {
+		if curNode.HasChildren() {
+			curNode.AddAggregator(curNode.FindNextAggregatedNode().Aggregator().Clone())
+		} else {
+			curNode.AddAggregator(NewAggregator())
+		}
+	}
+
 	for _, p := range paramValues {
 		curNode.Aggregator().Add(p.Param, p.Value)
 	}

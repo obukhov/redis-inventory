@@ -38,6 +38,10 @@ func (n *Node) IsFork() bool {
 	return len(n.Children) > 1
 }
 
+func (n *Node) HasChildren() bool {
+	return len(n.Children) > 0
+}
+
 func (n *Node) AddAggregator(aggr *Aggregator) {
 	n.Aggr = aggr
 }
