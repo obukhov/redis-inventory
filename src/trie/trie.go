@@ -1,20 +1,20 @@
 package trie
 
-func NewTrie(splitter Splitter, maxBucketSize uint64) *Trie {
+func NewTrie(splitter Splitter, maxChildren int) *Trie {
 	node := NewNode()
 	node.AddAggregator(NewAggregator())
 
 	return &Trie{
-		root:          node,
-		splitter:      splitter,
-		maxBucketSize: maxBucketSize,
+		root:        node,
+		splitter:    splitter,
+		maxChildren: maxChildren,
 	}
 }
 
 type Trie struct {
-	root          *Node
-	splitter      Splitter
-	maxBucketSize uint64
+	root        *Node
+	splitter    Splitter
+	maxChildren int
 }
 
 func (t *Trie) Add(key string, paramValues ...ParamValue) {
@@ -29,8 +29,12 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 				curNode.AddAggregator(nextAggregatedNode.Aggregator().Clone())
 			}
 
-			nextNode = NewNode()
-			curNode.AddChild(keyPiece, nextNode)
+			if curNode.ChildCount() < t.maxChildren {
+				nextNode = NewNode()
+				curNode.AddChild(keyPiece, nextNode)
+			} else {
+				break
+			}
 
 		} else {
 			nextNode = childNode
