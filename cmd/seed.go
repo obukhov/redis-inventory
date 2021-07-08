@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/obukhov/redis-inventory/src/seeder"
 	"log"
 	"math/rand"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -16,29 +15,12 @@ import (
 var cycles int
 
 var fillCmd = &cobra.Command{
-	Use:   "fill [host:port]",
+	Use:   "seed [host:port]",
 	Short: "Create random keys in redis instance",
 	Args:  cobra.MinimumNArgs(1),
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Filling redis with random data")
-
-		keys := [][]string{
-			{
-				"dev",
-				"prod",
-			},
-			{
-				"users",
-				"counters",
-				"foobar",
-			},
-			{
-				"foo",
-				"bar",
-				"hey",
-			},
-		}
 
 		rand.Seed(time.Now().UTC().UnixNano())
 
@@ -49,19 +31,29 @@ var fillCmd = &cobra.Command{
 		}
 		defer redisClient.Close()
 
-		for i := 0; i < cycles; i++ {
-			key := ""
-			for n := 0; n < len(keys); n++ {
-				key += keys[n][rand.Intn(len(keys[n]))] + ":"
-			}
-			key += strconv.Itoa(int(rand.Int31()))
-			value := strings.Repeat("N", rand.Intn(1000))
+		s := seeder.NewSeeder(redisClient)
 
-			setErr := redisClient.Do(ctx, radix.Cmd(nil, "SET", key, value))
-			if setErr != nil {
-				log.Println(setErr)
-			}
-		}
+		s.Seed(
+			seeder.NewSeedPattern(
+				20,
+				"%s:blogpost:%s:content",
+				seeder.NewEnumSeedParameter("dev", "prod"),
+				seeder.NewIntSeedParameter(1, 10),
+			),
+			seeder.NewSeedPattern(
+				100,
+				"%s:blogpost:%s:comment:%s",
+				seeder.NewEnumSeedParameter("dev", "prod"),
+				seeder.NewIntSeedParameter(1, 5),
+				seeder.NewIntSeedParameter(1, 1000),
+			),
+			seeder.NewSeedPattern(
+				10,
+				"%s:user:%s:profile",
+				seeder.NewEnumSeedParameter("dev", "prod"),
+				seeder.NewStringSeedParameter(4, 6, 'a', 'b', 'd', 'e', 'f'),
+			),
+		)
 	},
 }
 
