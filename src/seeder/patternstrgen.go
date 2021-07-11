@@ -4,10 +4,6 @@ import (
 	"fmt"
 )
 
-type StringGenerator interface {
-	generate() string
-}
-
 func NewPatternStringGenerator(pattern string, paramsGenerator ...StringGenerator) PatternStringGenerator {
 	return PatternStringGenerator{
 		pattern:         pattern,

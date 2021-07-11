@@ -2,15 +2,15 @@ package seeder
 
 import "math/rand"
 
-type StringSeedParameter struct {
+type RandStringGenerator struct {
 	minLength    int
 	maxLength    int
 	symbols      []rune
 	symbolsCount int
 }
 
-func NewStringSeedParameter(minLength, maxLength int, symbols ...rune) StringSeedParameter {
-	return StringSeedParameter{
+func NewRandStringGenerator(minLength, maxLength int, symbols ...rune) RandStringGenerator {
+	return RandStringGenerator{
 		minLength,
 		maxLength,
 		symbols,
@@ -18,7 +18,7 @@ func NewStringSeedParameter(minLength, maxLength int, symbols ...rune) StringSee
 	}
 }
 
-func (s StringSeedParameter) generate() string {
+func (s RandStringGenerator) generate() string {
 	length := rand.Intn(s.maxLength-s.minLength) + s.minLength
 	result := make([]rune, 0, length)
 	for i := 0; i < length; i++ {

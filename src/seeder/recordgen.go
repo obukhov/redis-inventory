@@ -4,6 +4,10 @@ type RecordGenerator interface {
 	generate() <-chan Record
 }
 
+type StringGenerator interface {
+	generate() string
+}
+
 type Record struct {
 	key   string
 	ttl   int
