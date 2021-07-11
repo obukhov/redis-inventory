@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/seeder"
 	"log"
 	"math/rand"
@@ -31,7 +32,7 @@ var fillCmd = &cobra.Command{
 		}
 		defer redisClient.Close()
 
-		s := seeder.NewSeeder(redisClient)
+		s := seeder.NewSeeder(redisClient, logger.NewConsoleLogger())
 
 		s.Seed(
 			seeder.NewGenericRecordGenerator(
