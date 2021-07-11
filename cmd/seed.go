@@ -34,24 +34,33 @@ var fillCmd = &cobra.Command{
 		s := seeder.NewSeeder(redisClient)
 
 		s.Seed(
-			seeder.NewSeedPattern(
+			seeder.NewGenericRecordGenerator(
 				20,
-				"%s:blogpost:%s:content",
-				seeder.NewEnumSeedParameter("dev", "prod"),
-				seeder.NewIntSeedParameter(1, 10),
+				seeder.NewPatternStringGenerator(
+					"%s:blogpost:%s:content",
+					seeder.NewEnumSeedParameter("dev", "prod"),
+					seeder.NewIntSeedParameter(1, 10),
+				),
+				seeder.NewStringSeedParameter(100, 1000, '1', '0'),
 			),
-			seeder.NewSeedPattern(
+			seeder.NewGenericRecordGenerator(
 				100,
-				"%s:blogpost:%s:comment:%s",
-				seeder.NewEnumSeedParameter("dev", "prod"),
-				seeder.NewIntSeedParameter(1, 5),
-				seeder.NewIntSeedParameter(1, 1000),
+				seeder.NewPatternStringGenerator(
+					"%s:blogpost:%s:comment:%s",
+					seeder.NewEnumSeedParameter("dev", "prod"),
+					seeder.NewIntSeedParameter(1, 5),
+					seeder.NewIntSeedParameter(1, 1000),
+				),
+				seeder.NewStringSeedParameter(100, 1000, '1', '0'),
 			),
-			seeder.NewSeedPattern(
+			seeder.NewGenericRecordGenerator(
 				10,
-				"%s:user:%s:profile",
-				seeder.NewEnumSeedParameter("dev", "prod"),
-				seeder.NewStringSeedParameter(4, 6, 'a', 'b', 'd', 'e', 'f'),
+				seeder.NewPatternStringGenerator(
+					"%s:user:%s:profile",
+					seeder.NewEnumSeedParameter("dev", "prod"),
+					seeder.NewStringSeedParameter(4, 6, 'a', 'b', 'd', 'e', 'f'),
+				),
+				seeder.NewStringSeedParameter(100, 1000, '1', '0'),
 			),
 		)
 	},

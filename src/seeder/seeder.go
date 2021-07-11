@@ -1,7 +1,7 @@
 package seeder
 
 import (
-	"fmt"
+	"context"
 	"github.com/mediocregopher/radix/v4"
 	"log"
 )
@@ -14,14 +14,22 @@ type Seeder struct {
 	client radix.Client
 }
 
-func (s *Seeder) Seed(patterns ...SeedPattern) {
-	for _, p := range patterns {
-		for i := 0; i < p.repeatCount; i++ {
-			seedParamValues := make([]interface{}, 0, len(p.seedParams))
-			for _, seedParam := range p.seedParams {
-				seedParamValues = append(seedParamValues, seedParam.generate())
+func (s *Seeder) Seed(generators ...RecordGenerator) {
+	for _, generator := range generators {
+		for record := range generator.generate() {
+			err := s.client.Do(context.Background(), radix.FlatCmd(nil, "SET", record.key, record.value))
+			if err != nil {
+				log.Printf("Error creating key %s: %s", record.key, err)
+				continue
 			}
-			log.Println(fmt.Sprintf(p.pattern, seedParamValues...)) // todo write to redis
+
+			if record.ttl >= 0 {
+				err := s.client.Do(context.Background(), radix.FlatCmd(nil, "EXPIRE", record.key, record.ttl))
+				if err != nil {
+					log.Printf("Error setting TTL for the key %s: %s", record.key, err)
+					continue
+				}
+			}
 		}
 	}
 }
