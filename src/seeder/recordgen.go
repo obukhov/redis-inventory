@@ -8,17 +8,22 @@ type StringGenerator interface {
 	generate() string
 }
 
+type IntGenerator interface {
+	generate() int
+}
+
 type Record struct {
 	key   string
 	ttl   int
 	value string
 }
 
-func NewGenericRecordGenerator(repeatCount int, keyGenerator, valueGenerator StringGenerator) GenericRecordGenerator {
+func NewGenericRecordGenerator(repeatCount int, keyGenerator, valueGenerator StringGenerator, ttlGenerator IntGenerator) GenericRecordGenerator {
 	return GenericRecordGenerator{
 		repeatCount,
 		keyGenerator,
 		valueGenerator,
+		ttlGenerator,
 	}
 }
 
@@ -26,6 +31,7 @@ type GenericRecordGenerator struct {
 	repeatCount    int
 	keyGenerator   StringGenerator
 	valueGenerator StringGenerator
+	ttlGenerator   IntGenerator
 }
 
 func (g GenericRecordGenerator) generate() <-chan Record {
@@ -34,9 +40,9 @@ func (g GenericRecordGenerator) generate() <-chan Record {
 		defer close(result)
 		for i := 0; i < g.repeatCount; i++ {
 			result <- Record{
-				key:   g.keyGenerator.generate(),
-				ttl:   86400, //todo add generator
-				value: g.valueGenerator.generate(),
+				g.keyGenerator.generate(),
+				g.ttlGenerator.generate(),
+				g.valueGenerator.generate(),
 			}
 
 		}

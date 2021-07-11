@@ -10,7 +10,7 @@ type IntRangeStringGenerator struct {
 	max int
 }
 
-func NewIntStringGenerator(min, max int) IntRangeStringGenerator {
+func NewIntRangeStringGenerator(min, max int) IntRangeStringGenerator {
 	return IntRangeStringGenerator{min, max}
 }
 

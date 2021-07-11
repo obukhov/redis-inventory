@@ -39,19 +39,21 @@ var fillCmd = &cobra.Command{
 				seeder.NewPatternStringGenerator(
 					"%s:blogpost:%s:content",
 					seeder.NewEnumStringGenerator("dev", "prod"),
-					seeder.NewIntStringGenerator(1, 10),
+					seeder.NewIntRangeStringGenerator(1, 10),
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
+				seeder.NewIntRangeGenerator(3600, 86400),
 			),
 			seeder.NewGenericRecordGenerator(
 				100,
 				seeder.NewPatternStringGenerator(
 					"%s:blogpost:%s:comment:%s",
 					seeder.NewEnumStringGenerator("dev", "prod"),
-					seeder.NewIntStringGenerator(1, 5),
-					seeder.NewIntStringGenerator(1, 1000),
+					seeder.NewIntRangeStringGenerator(1, 5),
+					seeder.NewIntRangeStringGenerator(1, 1000),
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
+				seeder.NewIntRangeGenerator(3600, 86400),
 			),
 			seeder.NewGenericRecordGenerator(
 				10,
@@ -61,6 +63,7 @@ var fillCmd = &cobra.Command{
 					seeder.NewRandStringGenerator(4, 6, 'a', 'b', 'd', 'e', 'f'),
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
+				seeder.NewIntRangeGenerator(3600, 86400),
 			),
 		)
 	},
