@@ -61,3 +61,7 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 		curNode.Aggregator().Add(p.Param, p.Value)
 	}
 }
+
+func (t *Trie) Root() *Node {
+	return t.root
+}

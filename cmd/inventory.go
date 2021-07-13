@@ -4,13 +4,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/scanner"
+	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/spf13/cobra"
 	"log"
 )
 
 var scanCmd = &cobra.Command{
-	Use:   "scan [sourceHost:port]",
+	Use:   "inventory [sourceHost:port]",
 	Short: "",
 	Long:  "",
 	Args:  cobra.MinimumNArgs(1),
@@ -24,9 +26,11 @@ var scanCmd = &cobra.Command{
 
 		redisScanner := scanner.NewScanner(
 			clientSource,
+			logger.NewConsoleLogger(),
 		)
 
-		redisScanner.Scan()
+		result := trie.NewTrie(trie.NewPunctuationSplitter(':'), 10)
+		redisScanner.Scan(scanner.ScanOptions{ScanCount: 1000}, result)
 
 		fmt.Println("Finish scanning")
 	},

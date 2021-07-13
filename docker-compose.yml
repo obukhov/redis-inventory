@@ -1,6 +1,6 @@
 version: '3.7'
 services:
   redis:
-    image: redis:3.2.10-alpine
+    image: redis:6.2-alpine
     ports:
       - "${REDIS_PORT:-63795}:6379"
