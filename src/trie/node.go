@@ -48,19 +48,30 @@ func (n *Node) ChildCount() int {
 	return len(n.Children)
 }
 
-func (n *Node) FirstChild() *Node {
-	for _, child := range n.Children {
-		return child
+func (n *Node) FirstChild() (string, *Node) {
+	for key, child := range n.Children {
+		return key, child
 	}
 
 	panic("No Children when called FirstChild")
 }
 
 func (n *Node) FindNextAggregatedNode() *Node {
-	nextNode := n.FirstChild()
+	_, nextNode := n.FirstChild()
 	for !nextNode.HasAggregator() {
-		nextNode = nextNode.FirstChild()
+		_, nextNode = nextNode.FirstChild()
 	}
 
 	return nextNode
+}
+
+func (n *Node) FindNextAggregatedNodeWithKey() (string, *Node) {
+	key, nextNode := n.FirstChild()
+	for !nextNode.HasAggregator() {
+		var k string
+		k, nextNode = nextNode.FirstChild()
+		key = key + k
+	}
+
+	return key, nextNode
 }

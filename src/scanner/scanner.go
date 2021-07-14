@@ -2,8 +2,6 @@ package scanner
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/mediocregopher/radix/v4"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
@@ -50,8 +48,4 @@ func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
 		result.Add(key, trie.ParamValue{Param: trie.BytesSize, Value: res})
 		s.logger.Info().Msgf("Dump %s value: %d", key, res)
 	}
-
-	//j, _ := json.MarshalIndent(result.Root(), "", "    ")
-	j, _ := json.Marshal(result.Root())
-	fmt.Println(string(j))
 }

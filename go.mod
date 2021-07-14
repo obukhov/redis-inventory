@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/mediocregopher/radix/v4 v4.0.0-beta.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/zerolog v1.23.0
