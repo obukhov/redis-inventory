@@ -34,13 +34,14 @@ var fillCmd = &cobra.Command{
 
 		s := seeder.NewSeeder(redisClient, logger.NewConsoleLogger())
 
+		hexGenerator := seeder.NewRandStringGenerator(4, 10, 'a', 'b', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 		s.Seed(
 			seeder.NewGenericRecordGenerator(
-				20,
+				200,
 				seeder.NewPatternStringGenerator(
 					"%s:blogpost:%s:content",
 					seeder.NewEnumStringGenerator("dev", "prod"),
-					seeder.NewIntRangeStringGenerator(1, 10),
+					seeder.NewIntRangeStringGenerator(1, 5),
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
 				seeder.NewIntRangeGenerator(3600, 86400),
@@ -57,11 +58,21 @@ var fillCmd = &cobra.Command{
 				seeder.NewIntRangeGenerator(3600, 86400),
 			),
 			seeder.NewGenericRecordGenerator(
-				10,
+				500,
 				seeder.NewPatternStringGenerator(
 					"%s:user:%s:profile",
 					seeder.NewEnumStringGenerator("dev", "prod"),
-					seeder.NewRandStringGenerator(4, 6, 'a', 'b', 'd', 'e', 'f'),
+					hexGenerator,
+				),
+				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
+				seeder.NewIntRangeGenerator(3600, 86400),
+			),
+			seeder.NewGenericRecordGenerator(
+				500,
+				seeder.NewPatternStringGenerator(
+					"%s:friends:foobar:%s:profile",
+					seeder.NewEnumStringGenerator("dev", "prod"),
+					hexGenerator,
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
 				seeder.NewIntRangeGenerator(3600, 86400),

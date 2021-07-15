@@ -40,7 +40,7 @@ var scanCmd = &cobra.Command{
 		switch output {
 
 		case "table":
-			trieoutput.NewTableTrieOutput(os.Stdout, 2).Render(resultTrie)
+			trieoutput.NewTableTrieOutput(os.Stdout, 10, "").Render(resultTrie)
 		case "json":
 			j, _ := json.Marshal(resultTrie.Root())
 			fmt.Println(string(j))

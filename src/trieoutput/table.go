@@ -9,16 +9,18 @@ import (
 	"strings"
 )
 
-func NewTableTrieOutput(output io.Writer, depth int) *TableTrieOutput {
+func NewTableTrieOutput(output io.Writer, depth int, padding string) *TableTrieOutput {
 	return &TableTrieOutput{
-		output: output,
-		depth:  depth,
+		output:  output,
+		depth:   depth,
+		padding: padding,
 	}
 }
 
 type TableTrieOutput struct {
-	output io.Writer
-	depth  int
+	output  io.Writer
+	depth   int
+	padding string
 }
 
 func (o *TableTrieOutput) Render(trie *trie.Trie) {
@@ -26,26 +28,38 @@ func (o *TableTrieOutput) Render(trie *trie.Trie) {
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Key", "ByteSize", "Count"})
 
-	o.appendLevel(t, trie.Root(), 1)
+	o.appendLevel(t, trie.Root(), 1, "")
 	t.Render()
 
 }
 
-func (o *TableTrieOutput) appendLevel(t table.Writer, node *trie.Node, level int) {
-
+func (o *TableTrieOutput) appendLevel(t table.Writer, node *trie.Node, level int, prefix string) {
 	for key, childNode := range node.Children {
 		byteSizeColumn := ""
-		if childNode.HasAggregator() {
-			byteSizeColumn = strconv.Itoa(int(childNode.Aggregator().Params[trie.BytesSize]))
+		nextLevel := level + 1
+		if !childNode.HasAggregator() {
+			var keys []string
+			keys, childNode = childNode.FindNextAggregatedNodeWithKey()
+			nextLevel += len(keys)
+			key = key + strings.Join(keys, "")
 		}
 
+		byteSizeColumn = strconv.Itoa(int(childNode.Aggregator().Params[trie.BytesSize]))
 		t.AppendRow(table.Row{
-			strings.Repeat("  ", level) + key,
+			o.displayKey(level, key, prefix),
 			byteSizeColumn,
 		})
 
 		if level < o.depth {
-			o.appendLevel(t, childNode, level+1)
+			o.appendLevel(t, childNode, nextLevel, prefix+key)
 		}
+	}
+}
+
+func (o *TableTrieOutput) displayKey(level int, key string, prefix string) string {
+	if o.padding != "" {
+		return strings.Repeat(o.padding, level) + key
+	} else {
+		return prefix + key
 	}
 }

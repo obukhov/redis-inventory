@@ -48,30 +48,55 @@ func (n *Node) ChildCount() int {
 	return len(n.Children)
 }
 
-func (n *Node) FirstChild() (string, *Node) {
-	for key, child := range n.Children {
-		return key, child
+func (n *Node) FirstChild() *Node {
+	for _, child := range n.Children {
+		return child
 	}
 
 	panic("No Children when called FirstChild")
 }
 
+func (n *Node) FirstChildWithKey() (string, *Node) {
+	for key, child := range n.Children {
+		return key, child
+	}
+
+	panic("No Children when called FirstChildWithKey")
+}
+
 func (n *Node) FindNextAggregatedNode() *Node {
-	_, nextNode := n.FirstChild()
+	nextNode := n.FirstChild()
 	for !nextNode.HasAggregator() {
-		_, nextNode = nextNode.FirstChild()
+		nextNode = nextNode.FirstChild()
 	}
 
 	return nextNode
 }
 
-func (n *Node) FindNextAggregatedNodeWithKey() (string, *Node) {
-	key, nextNode := n.FirstChild()
+func (n *Node) FindNextAggregatedNodeWithKey() ([]string, *Node) {
+	firstKey, nextNode := n.FirstChildWithKey()
+	keys := []string{firstKey}
 	for !nextNode.HasAggregator() {
-		var k string
-		k, nextNode = nextNode.FirstChild()
-		key = key + k
+		var key string
+		key, nextNode = nextNode.FirstChildWithKey()
+		keys = append(keys, key)
 	}
 
-	return key, nextNode
+	return keys, nextNode
 }
+
+//func (n *Node) FastForward() ([]string, *Node) {
+//	if false == n.HasChildren() {
+//		return []string{}, nil
+//	}
+//
+//	key, nextNode := n.FirstChild()
+//	keys := []string{key}
+//	for !nextNode.HasAggregator() && n.HasChildren() {
+//		var k string
+//		k, nextNode = nextNode.FirstChild()
+//		key = key + k
+//	}
+//
+//	return key, nextNode
+//}
