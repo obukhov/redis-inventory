@@ -11,7 +11,9 @@ import (
 )
 
 func NewTableRendererParams(paramsString string) (TableRendererParams, error) {
-	params := TableRendererParams{}
+	params := TableRendererParams{
+		Depth: 10,
+	}
 
 	err := urlquery.Unmarshal([]byte(paramsString), &params)
 	if err != nil {
