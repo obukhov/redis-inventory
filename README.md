@@ -51,7 +51,7 @@ go run main.go inventory <host>:<port> [--output=<output type>] [--output-params
 | padSpaces    | Number of spaces to indent the nested level    | `""`      |
 | padding      | Use custom character to pad nested level       | `""`      |
 | depth        | Maximum nesting level for keys before grouping | 10        |
-+---------------------------------------------------------------------------+
+
 
 If padding is not specified in either way, nested keys are displayed with full paths as following:
 ```bash
@@ -72,4 +72,5 @@ If padding is not specified in either way, nested keys are displayed with full p
 |--------------|----------------------------------------------|-----------|
 | padSpaces    | Number of spaces to indent the nested level  | `""`      |
 | padding      | Use custom character to pad nested level     | `""`      |
-+-------------------------------------------------------------------------+
+
+If padding is not specified in either way json is not pretty-printed.
