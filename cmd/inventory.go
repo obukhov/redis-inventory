@@ -18,7 +18,7 @@ var scanCmd = &cobra.Command{
 	Long:  "",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		consoleLogger := logger.NewConsoleLogger()
+		consoleLogger := logger.NewConsoleLogger(logLevel)
 		consoleLogger.Info().Msg("Start scanning")
 
 		clientSource, err := (radix.PoolConfig{}).New(context.Background(), "tcp", args[0])
@@ -49,4 +49,5 @@ func init() {
 	rootCmd.AddCommand(scanCmd)
 	scanCmd.Flags().StringVarP(&output, "output", "o", "table", "One of possible outputs: json, jsonp, table")
 	scanCmd.Flags().StringVarP(&outputParams, "output-params", "p", "", "Parameters specific for output type")
+	scanCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")
 }

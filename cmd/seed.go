@@ -32,7 +32,7 @@ var fillCmd = &cobra.Command{
 		}
 		defer redisClient.Close()
 
-		s := seeder.NewSeeder(redisClient, logger.NewConsoleLogger())
+		s := seeder.NewSeeder(redisClient, logger.NewConsoleLogger(logLevel))
 
 		hexGenerator := seeder.NewRandStringGenerator(4, 10, 'a', 'b', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 		s.Seed(
@@ -86,4 +86,5 @@ var fillCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(fillCmd)
 	fillCmd.Flags().IntVar(&cycles, "cycles", 1000, "Cycles count to perform")
+	fillCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")
 }
