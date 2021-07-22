@@ -3,6 +3,7 @@ module github.com/obukhov/redis-inventory
 go 1.16
 
 require (
+	github.com/hetiansu5/urlquery v1.2.6
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/mediocregopher/radix/v4 v4.0.0-beta.1

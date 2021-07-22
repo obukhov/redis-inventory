@@ -37,21 +37,23 @@ var fillCmd = &cobra.Command{
 		hexGenerator := seeder.NewRandStringGenerator(4, 10, 'a', 'b', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 		s.Seed(
 			seeder.NewGenericRecordGenerator(
-				200,
+				2000,
 				seeder.NewPatternStringGenerator(
-					"%s:blogpost:%s:content",
+					"%s:%s:%s:content",
 					seeder.NewEnumStringGenerator("dev", "prod"),
-					seeder.NewIntRangeStringGenerator(1, 5),
+					seeder.NewEnumStringGenerator("blogpost", "article", "news", "collections", "events"),
+					seeder.NewIntRangeStringGenerator(1, 20),
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
 				seeder.NewIntRangeGenerator(3600, 86400),
 			),
 			seeder.NewGenericRecordGenerator(
-				100,
+				2000,
 				seeder.NewPatternStringGenerator(
-					"%s:blogpost:%s:comment:%s",
+					"%s:%s:%s:comment:%s",
 					seeder.NewEnumStringGenerator("dev", "prod"),
-					seeder.NewIntRangeStringGenerator(1, 5),
+					seeder.NewEnumStringGenerator("blogpost", "article", "news", "collections", "events"),
+					seeder.NewIntRangeStringGenerator(1, 20),
 					seeder.NewIntRangeStringGenerator(1, 1000),
 				),
 				seeder.NewRandStringGenerator(100, 1000, '1', '0'),
