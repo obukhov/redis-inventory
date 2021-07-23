@@ -6,12 +6,15 @@ type InvParam uint
 
 const (
 	BytesSize InvParam = iota
+	KeysCount
 )
 
 func (p InvParam) String() string {
 	switch p {
 	case BytesSize:
 		return "BytesSize"
+	case KeysCount:
+		return "KeysCount"
 	}
 
 	panic("Unknown InvParam: " + strconv.Itoa(int(p)))

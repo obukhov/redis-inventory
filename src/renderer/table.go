@@ -3,6 +3,7 @@ package renderer
 import (
 	"github.com/hetiansu5/urlquery"
 	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"io"
 	"os"
@@ -39,10 +40,15 @@ type TableRenderer struct {
 
 func (o TableRenderer) Render(trie *trie.Trie) error {
 	t := table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Key", "ByteSize", "Count"})
-
+	t.AppendHeader(table.Row{"Key", "ByteSize", "KeysCount"})
 	o.appendLevel(t, trie.Root(), 1, "")
+
+	t.SetColumnConfigs([]table.ColumnConfig{
+		{Number: 1},
+		{Number: 2, Align: text.AlignRight, AlignHeader: text.AlignCenter},
+		{Number: 3, Align: text.AlignRight, AlignHeader: text.AlignCenter},
+	})
+	t.SetOutputMirror(os.Stdout)
 	t.Render()
 
 	return nil
@@ -50,7 +56,6 @@ func (o TableRenderer) Render(trie *trie.Trie) error {
 
 func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, prefix string) {
 	for key, childNode := range node.Children {
-		byteSizeColumn := ""
 		nextLevel := level + 1
 		if !childNode.HasAggregator() {
 			var keys []string
@@ -59,10 +64,10 @@ func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, p
 			key = key + strings.Join(keys, "")
 		}
 
-		byteSizeColumn = strconv.Itoa(int(childNode.Aggregator().Params[trie.BytesSize]))
 		t.AppendRow(table.Row{
 			o.displayKey(level, key, prefix),
-			byteSizeColumn,
+			strconv.Itoa(int(childNode.Aggregator().Params[trie.BytesSize])),
+			strconv.Itoa(int(childNode.Aggregator().Params[trie.KeysCount])),
 		})
 
 		if level < o.params.Depth {

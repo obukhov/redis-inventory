@@ -45,7 +45,11 @@ func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
 			continue
 		}
 
-		result.Add(key, trie.ParamValue{Param: trie.BytesSize, Value: res})
+		result.Add(
+			key,
+			trie.ParamValue{Param: trie.BytesSize, Value: res},
+			trie.ParamValue{Param: trie.KeysCount, Value: 1},
+		)
 		s.logger.Debug().Msgf("Dump %s value: %d", key, res)
 	}
 }
