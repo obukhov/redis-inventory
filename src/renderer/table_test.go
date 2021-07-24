@@ -92,10 +92,6 @@ func (suite *TableRendererTestSuite) TestRenderParam() {
 	}
 }
 
-func TestTableRendererTestSuite(t *testing.T) {
-	suite.Run(t, new(TableRendererTestSuite))
-}
-
 func (suite *TableRendererTestSuite) SetupTest() {
 	suite.trie = trie.NewTrie(trie.NewPunctuationSplitter(':'), 3)
 
@@ -112,4 +108,8 @@ func (suite *TableRendererTestSuite) SetupTest() {
 
 func (suite *TableRendererTestSuite) setupTrieKey(key string, value int64) {
 	suite.trie.Add(key, trie.ParamValue{Param: trie.BytesSize, Value: value}, trie.ParamValue{Param: trie.KeysCount, Value: 1})
+}
+
+func TestTableRendererTestSuite(t *testing.T) {
+	suite.Run(t, new(TableRendererTestSuite))
 }
