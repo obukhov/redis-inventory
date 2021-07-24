@@ -17,20 +17,12 @@ func (n *Node) HasAggregator() bool {
 	return n.Aggr != nil
 }
 
-func (n *Node) HasChild(key string) bool {
-	return n.Children[key] != nil
-}
-
 func (n *Node) GetChild(key string) *Node {
 	return n.Children[key]
 }
 
 func (n *Node) Aggregator() *Aggregator {
 	return n.Aggr
-}
-
-func (n *Node) IsFork() bool {
-	return len(n.Children) > 1
 }
 
 func (n *Node) HasChildren() bool {
@@ -85,19 +77,3 @@ func (n *Node) FindNextAggregatedNodeWithKey() ([]string, *Node) {
 
 	return keys, nextNode
 }
-
-//func (n *Node) FastForward() ([]string, *Node) {
-//	if false == n.HasChildren() {
-//		return []string{}, nil
-//	}
-//
-//	key, nextNode := n.FirstChild()
-//	keys := []string{key}
-//	for !nextNode.HasAggregator() && n.HasChildren() {
-//		var k string
-//		k, nextNode = nextNode.FirstChild()
-//		key = key + k
-//	}
-//
-//	return key, nextNode
-//}
