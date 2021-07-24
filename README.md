@@ -48,7 +48,7 @@ go run main.go inventory <host>:<port> [--output=<output type>] [--output-params
 
 | Option name  | Description                                    | Default   | 
 |--------------|------------------------------------------------|-----------|
-| padSpaces    | Number of spaces to indent the nested level    | `0`      |
+| padSpaces    | Number of spaces to indent the nested level    | `0`       |
 | padding      | Use custom character to pad nested level       | `""`      |
 | depth        | Maximum nesting level for keys before grouping | 10        |
 
@@ -70,7 +70,7 @@ If padding is not specified in either way, nested keys are displayed with full p
 
 | Option name  | Description                                  | Default   | 
 |--------------|----------------------------------------------|-----------|
-| padSpaces    | Number of spaces to indent the nested level  | `0`      |
+| padSpaces    | Number of spaces to indent the nested level  | `0`       |
 | padding      | Use custom character to pad nested level     | `""`      |
 
 If padding is not specified in either way json is not pretty-printed.
