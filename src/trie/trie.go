@@ -33,6 +33,7 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 				nextNode = NewNode()
 				curNode.AddChild(keyPiece, nextNode)
 			} else {
+				curNode.OverflowChildrenCount++
 				break
 			}
 

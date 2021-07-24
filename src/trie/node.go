@@ -8,8 +8,9 @@ func NewNode() *Node {
 }
 
 type Node struct {
-	Children map[string]*Node `json:"Children,omitempty"`
-	Aggr     *Aggregator      `json:"Values,omitempty"`
+	Children              map[string]*Node `json:"Children,omitempty"`
+	Aggr                  *Aggregator      `json:"Values,omitempty"`
+	OverflowChildrenCount uint64           `json:"Overflow,omitempty"`
 }
 
 func (n *Node) HasAggregator() bool {

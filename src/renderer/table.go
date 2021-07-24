@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"fmt"
 	"github.com/hetiansu5/urlquery"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -73,6 +74,10 @@ func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, p
 		if level < o.params.Depth {
 			o.appendLevel(t, childNode, nextLevel, prefix+key)
 		}
+	}
+
+	if node.OverflowChildrenCount > 0 {
+		t.AppendRow(table.Row{o.displayKey(level, fmt.Sprintf("( %d more keys )", node.OverflowChildrenCount), prefix)})
 	}
 }
 
