@@ -7,11 +7,12 @@ import (
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"io"
-	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
 
+// NewTableRendererParams Creates parameters structure from url-encoded string respecting some defaults
 func NewTableRendererParams(paramsString string) (TableRendererParams, error) {
 	params := TableRendererParams{
 		Depth: 10,
@@ -27,6 +28,7 @@ func NewTableRendererParams(paramsString string) (TableRendererParams, error) {
 	return params, nil
 }
 
+// TableRendererParams represents renderer parameters
 type TableRendererParams struct {
 	Depth             int    `query:"depth"`
 	Padding           string `query:"padding"`
@@ -34,11 +36,13 @@ type TableRendererParams struct {
 	indent            string
 }
 
+// TableRenderer renders trie as ascii-table to output (most probably stdout)
 type TableRenderer struct {
 	output io.Writer
 	params TableRendererParams
 }
 
+// Render executes rendering
 func (o TableRenderer) Render(trie *trie.Trie) error {
 	t := table.NewWriter()
 	t.AppendHeader(table.Row{"Key", "ByteSize", "KeysCount"})
@@ -49,14 +53,21 @@ func (o TableRenderer) Render(trie *trie.Trie) error {
 		{Number: 2, Align: text.AlignRight, AlignHeader: text.AlignCenter},
 		{Number: 3, Align: text.AlignRight, AlignHeader: text.AlignCenter},
 	})
-	t.SetOutputMirror(os.Stdout)
+	t.SetOutputMirror(o.output)
 	t.Render()
 
 	return nil
 }
 
 func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, prefix string) {
-	for key, childNode := range node.Children {
+	childKeys := make([]string, 0, len(node.Children))
+	for k := range node.Children {
+		childKeys = append(childKeys, k)
+	}
+
+	sort.Strings(childKeys)
+	for _, key := range childKeys {
+		childNode := node.Children[key]
 		nextLevel := level + 1
 		if !childNode.HasAggregator() {
 			var keys []string
@@ -84,7 +95,7 @@ func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, p
 func (o TableRenderer) displayKey(level int, key string, prefix string) string {
 	if o.params.indent != "" {
 		return strings.Repeat(o.params.indent, level) + key
-	} else {
-		return prefix + key
 	}
+
+	return prefix + key
 }
