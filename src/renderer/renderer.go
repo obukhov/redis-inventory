@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"errors"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"os"
 )
@@ -26,6 +27,6 @@ func NewRenderer(output, paramsString string) (Renderer, error) {
 
 		return JsonRenderer{os.Stdout, params}, nil
 	default:
-		panic("Unknown output format: " + output)
+		return nil, errors.New("unknown render type")
 	}
 }

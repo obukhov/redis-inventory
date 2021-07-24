@@ -86,8 +86,8 @@ func (suite *TableRendererTestSuite) TestRenderParam() {
 		suite.Run(t.paramString, func() {
 
 			params, err := NewTableRendererParams(t.paramString)
-			suite.Nil(err)
-			suite.Equal(t.expectedParams, params)
+			suite.Assert().Nil(err)
+			suite.Assert().Equal(t.expectedParams, params)
 		})
 	}
 }
