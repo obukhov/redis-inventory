@@ -20,9 +20,8 @@ func NewScanner(client radix.Client, logger zerolog.Logger) *RedisScanner {
 }
 
 type ScanOptions struct {
-	Pattern          string
-	ScanCount        int
-	PullRoutineCount int
+	Pattern   string
+	ScanCount int
 }
 
 func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
