@@ -5,6 +5,7 @@ import (
 	"github.com/mediocregopher/radix/v4"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
 	"net"
 	"testing"
 )
@@ -30,7 +31,7 @@ func (r *RedisClientMock) Close() error {
 }
 
 func (suite *ScannerTestSuite) TestScan() {
-	_ = NewScanner(&RedisClientMock{}, zerolog.Nop())
+	_ = NewScanner(&RedisClientMock{}, NewPrettyProgressWriter(ioutil.Discard), zerolog.Nop())
 }
 
 func TestScannerTestSuite(t *testing.T) {

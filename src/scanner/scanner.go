@@ -8,14 +8,16 @@ import (
 )
 
 type RedisScanner struct {
-	client radix.Client
-	logger zerolog.Logger
+	client       radix.Client
+	scanProgress ProgressWriter
+	logger       zerolog.Logger
 }
 
-func NewScanner(client radix.Client, logger zerolog.Logger) *RedisScanner {
+func NewScanner(client radix.Client, scanProgress ProgressWriter, logger zerolog.Logger) *RedisScanner {
 	return &RedisScanner{
-		client: client,
-		logger: logger,
+		client:       client,
+		scanProgress: scanProgress,
+		logger:       logger,
 	}
 }
 
@@ -25,17 +27,23 @@ type ScanOptions struct {
 }
 
 func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
+
 	var key string
 	scanOpts := radix.ScannerConfig{
 		Command: "SCAN",
 		Count:   options.ScanCount,
 	}
 
-	if options.Pattern != "*" {
+	var totalCount int64
+	if options.Pattern != "*" && options.Pattern != "" {
 		scanOpts.Pattern = options.Pattern
+	} else {
+		totalCount = s.getKeysCount()
 	}
 
+	s.scanProgress.Start(totalCount)
 	radixScanner := scanOpts.New(s.client)
+
 	for radixScanner.Next(context.Background(), &key) {
 		var res int64
 		err := s.client.Do(context.Background(), radix.Cmd(&res, "MEMORY", "USAGE", key))
@@ -49,6 +57,19 @@ func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
 			trie.ParamValue{Param: trie.BytesSize, Value: res},
 			trie.ParamValue{Param: trie.KeysCount, Value: 1},
 		)
+
 		s.logger.Debug().Msgf("Dump %s value: %d", key, res)
+		s.scanProgress.Increment()
 	}
+	s.scanProgress.Stop()
+}
+
+func (s *RedisScanner) getKeysCount() int64 {
+	var keysCount int64
+	err := s.client.Do(context.Background(), radix.Cmd(&keysCount, "DBSIZE"))
+	if err != nil {
+		s.logger.Fatal().Err(err).Msg("Cannot determine number of keys, DBSIZE command returns error")
+	}
+
+	return keysCount
 }
