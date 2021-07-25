@@ -2,6 +2,7 @@ package renderer
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -61,6 +62,35 @@ func (suite *TableRendererTestSuite) TestRenderFullPathAndDepthLimit() {
 			"| prod:user:    |     4000 |         2 |\n"+
 			"| prod:user:bar |     2000 |         1 |\n"+
 			"| prod:user:foo |     2000 |         1 |\n"+
+			"+---------------+----------+-----------+\n",
+		buf.String(),
+	)
+}
+
+func (suite *TableRendererTestSuite) TestRenderHuman() {
+	var buf bytes.Buffer
+
+	r := TableRenderer{&buf, TableRendererParams{Depth: 2, HumanReadable: true}}
+
+	for i := 0; i < 1000; i++ {
+		suite.setupTrieKey(fmt.Sprintf("dev:blog:%d", i), 2)
+	}
+
+	err := r.Render(suite.trie)
+	suite.Assert().Nil(err, "Error rendering trie")
+
+	suite.Assert().Equal(
+		""+
+			"+---------------+----------+-----------+\n"+
+			"| KEY           | BYTESIZE | KEYSCOUNT |\n"+
+			"+---------------+----------+-----------+\n"+
+			"| dev:          |     4.4K |     1,007 |\n"+
+			"| dev:article:  |     500B |         5 |\n"+
+			"| dev:blog:     |       2K |     1,000 |\n"+
+			"| dev:user:     |       2K |         2 |\n"+
+			"| prod:user:    |     3.9K |         2 |\n"+
+			"| prod:user:bar |       2K |         1 |\n"+
+			"| prod:user:foo |       2K |         1 |\n"+
 			"+---------------+----------+-----------+\n",
 		buf.String(),
 	)
