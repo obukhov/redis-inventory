@@ -45,17 +45,20 @@ type PrettyProgressWriter struct {
 	tracker *progress.Tracker
 }
 
+// Start initiates progress writing progress, if total is unknown should be zero
 func (p *PrettyProgressWriter) Start(total int64) {
-	p.tracker = &progress.Tracker{Message: "Scanned keys", Total: total, Units: progress.UnitsDefault}
+	p.tracker = &progress.Tracker{Message: "Scanning keys", Total: total, Units: progress.UnitsDefault}
 	p.pw.AppendTracker(p.tracker)
 
 	go p.pw.Render()
 }
 
+// Increment increments progress
 func (p *PrettyProgressWriter) Increment() {
 	p.tracker.Increment(1)
 }
 
+// Stop labels progress as finished and stops updating progress
 func (p *PrettyProgressWriter) Stop() {
 	p.tracker.MarkAsDone()
 	p.tracker.PercentDone()

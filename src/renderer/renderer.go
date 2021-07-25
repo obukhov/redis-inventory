@@ -6,10 +6,13 @@ import (
 	"os"
 )
 
+// Renderer abstraction for rendering trie to a given output
 type Renderer interface {
+	// Render executes rendering
 	Render(trie *trie.Trie) error
 }
 
+// NewRenderer creates Renderer implementation by type and set of params
 func NewRenderer(output, paramsString string) (Renderer, error) {
 	switch output {
 	case "table":
@@ -20,12 +23,12 @@ func NewRenderer(output, paramsString string) (Renderer, error) {
 
 		return TableRenderer{os.Stdout, params}, nil
 	case "json":
-		params, err := NewJsonRendererParams(paramsString)
+		params, err := NewJSONRendererParams(paramsString)
 		if err != nil {
 			return nil, err
 		}
 
-		return JsonRenderer{os.Stdout, params}, nil
+		return JSONRenderer{os.Stdout, params}, nil
 	default:
 		return nil, errors.New("unknown render type")
 	}

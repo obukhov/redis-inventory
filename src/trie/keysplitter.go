@@ -1,13 +1,17 @@
 package trie
 
+// Splitter abstraction to split string in fragments
 type Splitter interface {
+	// Split splits string key to fragments with given strategy
 	Split(in string) []string
 }
 
+// PunctuationSplitter splitting keys by a specific set of symbols (i.e. punctuation)
 type PunctuationSplitter struct {
 	dividers map[rune]bool
 }
 
+// NewPunctuationSplitter creates PunctuationSplitter
 func NewPunctuationSplitter(punctuation ...rune) *PunctuationSplitter {
 	m := make(map[rune]bool)
 	for _, r := range punctuation {
@@ -17,6 +21,7 @@ func NewPunctuationSplitter(punctuation ...rune) *PunctuationSplitter {
 	return &PunctuationSplitter{dividers: m}
 }
 
+// Split splits string key to fragments with given strategy
 func (s *PunctuationSplitter) Split(in string) []string {
 	result := make([]string, 0)
 

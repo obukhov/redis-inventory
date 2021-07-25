@@ -23,7 +23,7 @@ func (suite *RendererTestSuite) TestNewRender() {
 		{
 			"json",
 			"",
-			JsonRenderer{},
+			JSONRenderer{},
 		},
 	} {
 		suite.Run(t.outputParams, func() {

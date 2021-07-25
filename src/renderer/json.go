@@ -8,8 +8,9 @@ import (
 	"strings"
 )
 
-func NewJsonRendererParams(paramsSerialized string) (JsonRendererParams, error) {
-	params := JsonRendererParams{}
+// NewJSONRendererParams creates JSONRendererParams
+func NewJSONRendererParams(paramsSerialized string) (JSONRendererParams, error) {
+	params := JSONRendererParams{}
 
 	err := urlquery.Unmarshal([]byte(paramsSerialized), &params)
 	if err != nil {
@@ -19,17 +20,20 @@ func NewJsonRendererParams(paramsSerialized string) (JsonRendererParams, error) 
 	return params, nil
 }
 
-type JsonRendererParams struct {
+// JSONRendererParams represents rendering params fr Json renderer
+type JSONRendererParams struct {
 	Padding           string `query:"padding"`
 	PaddingSpaceCount int    `query:"padSpaces"`
 }
 
-type JsonRenderer struct {
+// JSONRenderer renders trie in the JSON format
+type JSONRenderer struct {
 	output io.Writer
-	params JsonRendererParams
+	params JSONRendererParams
 }
 
-func (o JsonRenderer) Render(trie *trie.Trie) error {
+// Render executes rendering
+func (o JSONRenderer) Render(trie *trie.Trie) error {
 	encoder := json.NewEncoder(o.output)
 
 	indent := o.params.Padding + strings.Repeat(" ", o.params.PaddingSpaceCount)

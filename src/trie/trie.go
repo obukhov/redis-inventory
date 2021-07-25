@@ -1,5 +1,6 @@
 package trie
 
+// NewTrie created Trie
 func NewTrie(splitter Splitter, maxChildren int) *Trie {
 	node := NewNode()
 	node.AddAggregator(NewAggregator())
@@ -11,12 +12,14 @@ func NewTrie(splitter Splitter, maxChildren int) *Trie {
 	}
 }
 
+// Trie stores data about keys in a prefix tree
 type Trie struct {
 	root        *Node
 	splitter    Splitter
 	maxChildren int
 }
 
+// Add adds information about another key with set of params
 func (t *Trie) Add(key string, paramValues ...ParamValue) {
 	curNode := t.root
 	for _, keyPiece := range t.splitter.Split(key) { // change to zero allocation segmenter
@@ -63,6 +66,7 @@ func (t *Trie) Add(key string, paramValues ...ParamValue) {
 	}
 }
 
+// Root returns root of the trie
 func (t *Trie) Root() *Node {
 	return t.root
 }

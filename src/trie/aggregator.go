@@ -1,48 +1,29 @@
 package trie
 
-import "strconv"
-
-type InvParam uint
-
-const (
-	BytesSize InvParam = iota
-	KeysCount
-)
-
-func (p InvParam) String() string {
-	switch p {
-	case BytesSize:
-		return "BytesSize"
-	case KeysCount:
-		return "KeysCount"
-	}
-
-	panic("Unknown InvParam: " + strconv.Itoa(int(p)))
-}
-
-func (p InvParam) MarshalText() (text []byte, err error) {
-	return []byte(p.String()), nil
-}
-
+// ParamValue value for inventory param
 type ParamValue struct {
 	Param InvParam
 	Value int64
 }
 
+// NewAggregator creates Aggregator
 func NewAggregator() *Aggregator {
 	return &Aggregator{
 		Params: make(map[InvParam]int64),
 	}
 }
 
+// Aggregator struct holding various inventory param values
 type Aggregator struct {
 	Params map[InvParam]int64
 }
 
+// Add adds inv parameter value to aggregation
 func (a *Aggregator) Add(param InvParam, val int64) {
 	a.Params[param] += val
 }
 
+// Clone creates a copy of aggregator
 func (a *Aggregator) Clone() *Aggregator {
 	cloned := NewAggregator()
 	for k, v := range a.Params {

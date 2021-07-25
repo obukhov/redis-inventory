@@ -7,12 +7,14 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// RedisScanner scans redis keys and puts them in a trie
 type RedisScanner struct {
 	client       radix.Client
 	scanProgress ProgressWriter
 	logger       zerolog.Logger
 }
 
+// NewScanner creates RedisScanner
 func NewScanner(client radix.Client, scanProgress ProgressWriter, logger zerolog.Logger) *RedisScanner {
 	return &RedisScanner{
 		client:       client,
@@ -21,11 +23,13 @@ func NewScanner(client radix.Client, scanProgress ProgressWriter, logger zerolog
 	}
 }
 
+// ScanOptions options for scanning keyspace
 type ScanOptions struct {
 	Pattern   string
 	ScanCount int
 }
 
+// Scan initiates scanning process
 func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
 
 	var key string

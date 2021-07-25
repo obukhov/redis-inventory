@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// NewConsoleLogger creates cli friendly logger with given minimal logLevel
 func NewConsoleLogger(logLevel string) zerolog.Logger {
 
 	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
