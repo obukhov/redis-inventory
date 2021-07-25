@@ -1,16 +1,20 @@
 package renderer
 
 import (
+	"code.cloudfoundry.org/bytefmt"
 	"fmt"
 	"github.com/hetiansu5/urlquery"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/obukhov/redis-inventory/src/trie"
+	"golang.org/x/text/message"
 	"io"
 	"sort"
 	"strconv"
 	"strings"
 )
+
+var p = message.NewPrinter(message.MatchLanguage("en"))
 
 // NewTableRendererParams Creates parameters structure from url-encoded string respecting some defaults
 func NewTableRendererParams(paramsString string) (TableRendererParams, error) {
@@ -33,6 +37,7 @@ type TableRendererParams struct {
 	Depth             int    `query:"depth"`
 	Padding           string `query:"padding"`
 	PaddingSpaceCount int    `query:"padSpaces"`
+	HumanReadable     bool   `query:"human"`
 	indent            string
 }
 
@@ -78,8 +83,8 @@ func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, p
 
 		t.AppendRow(table.Row{
 			o.displayKey(level, key, prefix),
-			strconv.Itoa(int(childNode.Aggregator().Params[trie.BytesSize])),
-			strconv.Itoa(int(childNode.Aggregator().Params[trie.KeysCount])),
+			o.formatBytes(childNode.Aggregator().Params[trie.BytesSize]),
+			o.formatNumber(childNode.Aggregator().Params[trie.KeysCount]),
 		})
 
 		if level < o.params.Depth {
@@ -90,6 +95,23 @@ func (o TableRenderer) appendLevel(t table.Writer, node *trie.Node, level int, p
 	if node.OverflowChildrenCount > 0 {
 		t.AppendRow(table.Row{o.displayKey(level, fmt.Sprintf("( %d more keys )", node.OverflowChildrenCount), prefix)})
 	}
+}
+
+func (o TableRenderer) formatBytes(value int64) string {
+	if o.params.HumanReadable {
+		return bytefmt.ByteSize(uint64(value))
+	}
+
+	return strconv.Itoa(int(value))
+}
+
+func (o TableRenderer) formatNumber(value int64) string {
+
+	if o.params.HumanReadable {
+		return p.Sprint(value)
+	}
+
+	return strconv.Itoa(int(value))
 }
 
 func (o TableRenderer) displayKey(level int, key string, prefix string) string {

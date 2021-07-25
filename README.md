@@ -9,33 +9,33 @@ Tool to see redis memory usage by keys in hierarchical way.
 
 Example:
 ```bash
-$ go run main.go inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
+$ go run main.go inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
 ```
 
 Outputs it as a nice table
 ```bash
-12:04AM INF Start scanning
-+---------------------+----------+-------+
-| KEY                 | BYTESIZE | COUNT |
-+---------------------+----------+-------+
-|   prod:             | 1902856  |       |
-|     friends:foobar: | 333552   |       |
-|     events:         | 233768   |       |
-|     user:           | 290544   |       |
-|     collections:    | 253984   |       |
-|     news:           | 269800   |       |
-|     article:        | 267568   |       |
-|     blogpost:       | 253640   |       |
-|   dev:              | 2016720  |       |
-|     news:           | 270688   |       |
-|     article:        | 256824   |       |
-|     friends:foobar: | 309440   |       |
-|     blogpost:       | 275392   |       |
-|     user:           | 344976   |       |
-|     events:         | 290728   |       |
-|     collections:    | 268672   |       |
-+---------------------+----------+-------+
-12:04AM INF Finish scanning
+12:39PM INF Start scanning
++---------------------+----------+-----------+
+| KEY                 | BYTESIZE | KEYSCOUNT |
++---------------------+----------+-----------+
+|   dev:              |     2.9M |     4,555 |
+|     article:        |   413.7K |       616 |
+|     blogpost:       |   408.5K |       630 |
+|     collections:    |   426.7K |       627 |
+|     events:         |   391.2K |       614 |
+|     friends:foobar: |   501.1K |       745 |
+|     news:           |   388.8K |       593 |
+|     user:           |     481K |       730 |
+|   prod:             |     2.9M |     4,531 |
+|     article:        |   397.1K |       614 |
+|     blogpost:       |   409.4K |       627 |
+|     collections:    |   374.7K |       560 |
+|     events:         |   384.2K |       588 |
+|     friends:foobar: |     503K |       755 |
+|     news:           |   407.9K |       618 |
+|     user:           |   492.3K |       769 |
++---------------------+----------+-----------+
+12:39PM INF Finish scanning
 ```
 
 Not all the features are implemented, for details see the [project](https://github.com/obukhov/redis-inventory/projects/1)
@@ -50,7 +50,7 @@ go run main.go inventory <host>:<port> [--output=<output type>] [--output-params
 
 ### Table
 
-| Option name  | Description                                    | Default   | 
+| Option name  | Description                                    | Default   |
 |--------------|------------------------------------------------|-----------|
 | padSpaces    | Number of spaces to indent the nested level    | `0`       |
 | padding      | Use custom character to pad nested level       | `""`      |
@@ -59,20 +59,23 @@ go run main.go inventory <host>:<port> [--output=<output type>] [--output-params
 
 If padding is not specified in either way, nested keys are displayed with full paths as following:
 ```bash
-+----------------------+----------+-------+
-| KEY                  | BYTESIZE | COUNT |
-+----------------------+----------+-------+
-| prod:                | 1889136  |       |
-| prod:user:           | 287776   |       |
-| prod:collections:    | 251624   |       |
-| prod:news:           | 268496   |       |
-| prod:article:        | 264560   |       |
++----------------------+----------+-----------+
+| KEY                  | BYTESIZE | KEYSCOUNT |
++----------------------+----------+-----------+
+| dev:                 |     2.9M |     4,555 |
+| dev:article:         |   413.7K |       616 |
+| dev:blogpost:        |   408.5K |       630 |
+| dev:collections:     |   426.7K |       627 |
+| dev:events:          |   391.2K |       614 |
+| dev:friends:foobar:  |   501.1K |       745 |
+| dev:news:            |   388.8K |       593 |
+| dev:user:            |     481K |       730 |
 ...
 ```
 
 ### Json
 
-| Option name  | Description                                  | Default   | 
+| Option name  | Description                                  | Default   |
 |--------------|----------------------------------------------|-----------|
 | padSpaces    | Number of spaces to indent the nested level  | `0`       |
 | padding      | Use custom character to pad nested level     | `""`      |

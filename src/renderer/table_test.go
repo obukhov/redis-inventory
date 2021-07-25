@@ -15,7 +15,7 @@ type TableRendererTestSuite struct {
 func (suite *TableRendererTestSuite) TestRenderSpacePadding() {
 	var buf bytes.Buffer
 
-	r := TableRenderer{&buf, TableRendererParams{10, "", 2, "  "}}
+	r := TableRenderer{&buf, TableRendererParams{10, "", 2, false, "  "}}
 
 	err := r.Render(suite.trie)
 	suite.Assert().Nil(err, "Error rendering trie")
