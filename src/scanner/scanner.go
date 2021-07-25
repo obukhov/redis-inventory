@@ -5,6 +5,7 @@ import (
 	"github.com/mediocregopher/radix/v4"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
+	"time"
 )
 
 // RedisScanner scans redis keys and puts them in a trie
@@ -27,6 +28,7 @@ func NewScanner(client radix.Client, scanProgress ProgressWriter, logger zerolog
 type ScanOptions struct {
 	Pattern   string
 	ScanCount int
+	Throttle  int
 }
 
 // Scan initiates scanning process
@@ -64,6 +66,9 @@ func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
 
 		s.logger.Debug().Msgf("Dump %s value: %d", key, res)
 		s.scanProgress.Increment()
+		if options.Throttle > 0 {
+			time.Sleep(time.Nanosecond * time.Duration(options.Throttle))
+		}
 	}
 	s.scanProgress.Stop()
 }

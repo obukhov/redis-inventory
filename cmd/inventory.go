@@ -13,7 +13,7 @@ import (
 
 var (
 	output, outputParams, separators, pattern string
-	maxChildren, scanCount                    int
+	maxChildren, scanCount, throttleNs        int
 )
 
 var scanCmd = &cobra.Command{
@@ -37,7 +37,14 @@ var scanCmd = &cobra.Command{
 		)
 
 		resultTrie := trie.NewTrie(trie.NewPunctuationSplitter([]rune(separators)...), maxChildren)
-		redisScanner.Scan(scanner.ScanOptions{ScanCount: scanCount, Pattern: pattern}, resultTrie)
+		redisScanner.Scan(
+			scanner.ScanOptions{
+				ScanCount: scanCount,
+				Pattern:   pattern,
+				Throttle:  throttleNs,
+			},
+			resultTrie,
+		)
 
 		r, err := renderer.NewRenderer(output, outputParams)
 		if err != nil {
@@ -62,4 +69,5 @@ func init() {
 	scanCmd.Flags().IntVarP(&maxChildren, "maxChildren", "m", 10, "Maximum children node can have before start aggregating")
 	scanCmd.Flags().StringVarP(&pattern, "pattern", "k", "*", "Glob pattern limiting the keys to be aggregated")
 	scanCmd.Flags().IntVarP(&scanCount, "scanCount", "c", 1000, "Number of keys to be scanned in one iteration (argument of scan command)")
+	scanCmd.Flags().IntVarP(&throttleNs, "throttle", "t", 0, "Throttle: number of nanoseconds to sleep between keys")
 }
