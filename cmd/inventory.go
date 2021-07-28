@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"context"
+	"os"
+
 	"github.com/mediocregopher/radix/v4"
 	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/renderer"
 	"github.com/obukhov/redis-inventory/src/scanner"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var (
@@ -31,7 +32,7 @@ var scanCmd = &cobra.Command{
 		}
 
 		redisScanner := scanner.NewScanner(
-			clientSource,
+			scanner.NewRedisService(clientSource),
 			scanner.NewPrettyProgressWriter(os.Stdout),
 			consoleLogger,
 		)

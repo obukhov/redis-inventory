@@ -1,9 +1,10 @@
 package scanner
 
 import (
-	"github.com/jedib0t/go-pretty/v6/progress"
 	"io"
 	"time"
+
+	"github.com/jedib0t/go-pretty/v6/progress"
 )
 
 // ProgressWriter abstraction of progress writer
@@ -26,7 +27,7 @@ func NewPrettyProgressWriter(output io.Writer) *PrettyProgressWriter {
 	pw.ShowTime(true)
 	pw.ShowTracker(true)
 	pw.ShowValue(true)
-	pw.SetMessageWidth(12)
+	pw.SetMessageWidth(13)
 	pw.SetNumTrackersExpected(1)
 	pw.SetSortBy(progress.SortByPercentDsc)
 	pw.SetStyle(progress.StyleDefault)

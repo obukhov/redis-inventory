@@ -2,57 +2,37 @@ package scanner
 
 import (
 	"context"
-	"github.com/mediocregopher/radix/v4"
+
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 // RedisScanner scans redis keys and puts them in a trie
 type RedisScanner struct {
-	client       radix.Client
+	redisService RedisServiceInterface
 	scanProgress ProgressWriter
 	logger       zerolog.Logger
 }
 
 // NewScanner creates RedisScanner
-func NewScanner(client radix.Client, scanProgress ProgressWriter, logger zerolog.Logger) *RedisScanner {
+func NewScanner(redisService RedisServiceInterface, scanProgress ProgressWriter, logger zerolog.Logger) *RedisScanner {
 	return &RedisScanner{
-		client:       client,
+		redisService: redisService,
 		scanProgress: scanProgress,
 		logger:       logger,
 	}
 }
 
-// ScanOptions options for scanning keyspace
-type ScanOptions struct {
-	Pattern   string
-	ScanCount int
-	Throttle  int
-}
-
 // Scan initiates scanning process
 func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
-
-	var key string
-	scanOpts := radix.ScannerConfig{
-		Command: "SCAN",
-		Count:   options.ScanCount,
-	}
-
 	var totalCount int64
-	if options.Pattern != "*" && options.Pattern != "" {
-		scanOpts.Pattern = options.Pattern
-	} else {
+	if options.Pattern == "*" || options.Pattern == "" {
 		totalCount = s.getKeysCount()
 	}
 
 	s.scanProgress.Start(totalCount)
-	radixScanner := scanOpts.New(s.client)
-
-	for radixScanner.Next(context.Background(), &key) {
-		var res int64
-		err := s.client.Do(context.Background(), radix.Cmd(&res, "MEMORY", "USAGE", key))
+	for key := range s.redisService.ScanKeys(context.Background(), options) {
+		res, err := s.redisService.GetMemoryUsage(context.Background(), key)
 		if err != nil {
 			s.logger.Error().Err(err).Msgf("Error dumping key %s", key)
 			continue
@@ -66,19 +46,16 @@ func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
 
 		s.logger.Debug().Msgf("Dump %s value: %d", key, res)
 		s.scanProgress.Increment()
-		if options.Throttle > 0 {
-			time.Sleep(time.Nanosecond * time.Duration(options.Throttle))
-		}
 	}
 	s.scanProgress.Stop()
 }
 
 func (s *RedisScanner) getKeysCount() int64 {
-	var keysCount int64
-	err := s.client.Do(context.Background(), radix.Cmd(&keysCount, "DBSIZE"))
+	res, err := s.redisService.GetKeysCount(context.Background())
 	if err != nil {
-		s.logger.Fatal().Err(err).Msg("Cannot determine number of keys, DBSIZE command returns error")
+		s.logger.Error().Err(err).Msgf("Error getting number of keys")
+		return 0
 	}
 
-	return keysCount
+	return res
 }
