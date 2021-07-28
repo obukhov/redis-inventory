@@ -3,19 +3,20 @@ package scanner
 import (
 	"context"
 
+	"github.com/obukhov/redis-inventory/src/adapter"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
 )
 
 // RedisScanner scans redis keys and puts them in a trie
 type RedisScanner struct {
-	redisService RedisServiceInterface
-	scanProgress ProgressWriter
+	redisService adapter.RedisServiceInterface
+	scanProgress adapter.ProgressWriter
 	logger       zerolog.Logger
 }
 
 // NewScanner creates RedisScanner
-func NewScanner(redisService RedisServiceInterface, scanProgress ProgressWriter, logger zerolog.Logger) *RedisScanner {
+func NewScanner(redisService adapter.RedisServiceInterface, scanProgress adapter.ProgressWriter, logger zerolog.Logger) *RedisScanner {
 	return &RedisScanner{
 		redisService: redisService,
 		scanProgress: scanProgress,
@@ -24,7 +25,7 @@ func NewScanner(redisService RedisServiceInterface, scanProgress ProgressWriter,
 }
 
 // Scan initiates scanning process
-func (s *RedisScanner) Scan(options ScanOptions, result *trie.Trie) {
+func (s *RedisScanner) Scan(options adapter.ScanOptions, result *trie.Trie) {
 	var totalCount int64
 	if options.Pattern == "*" || options.Pattern == "" {
 		totalCount = s.getKeysCount()

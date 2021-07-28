@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/obukhov/redis-inventory/src/adapter"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
@@ -18,7 +19,7 @@ type RedisServiceMock struct {
 	mock.Mock
 }
 
-func (m *RedisServiceMock) ScanKeys(ctx context.Context, options ScanOptions) <-chan string {
+func (m *RedisServiceMock) ScanKeys(ctx context.Context, options adapter.ScanOptions) <-chan string {
 	args := m.Called(ctx, options)
 	return args.Get(0).(chan string)
 }
@@ -71,7 +72,7 @@ func (suite *ScannerTestSuite) TestScan() {
 
 	scanner := NewScanner(redisMock, progressMock, zerolog.Nop())
 	scanner.Scan(
-		ScanOptions{
+		adapter.ScanOptions{
 			ScanCount: 1000,
 			Throttle:  0,
 		},

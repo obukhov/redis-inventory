@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/mediocregopher/radix/v4"
+	"github.com/obukhov/redis-inventory/src/adapter"
 	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/renderer"
 	"github.com/obukhov/redis-inventory/src/scanner"
@@ -32,14 +33,14 @@ var scanCmd = &cobra.Command{
 		}
 
 		redisScanner := scanner.NewScanner(
-			scanner.NewRedisService(clientSource),
-			scanner.NewPrettyProgressWriter(os.Stdout),
+			adapter.NewRedisService(clientSource),
+			adapter.NewPrettyProgressWriter(os.Stdout),
 			consoleLogger,
 		)
 
 		resultTrie := trie.NewTrie(trie.NewPunctuationSplitter([]rune(separators)...), maxChildren)
 		redisScanner.Scan(
-			scanner.ScanOptions{
+			adapter.ScanOptions{
 				ScanCount: scanCount,
 				Pattern:   pattern,
 				Throttle:  throttleNs,
