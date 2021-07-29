@@ -1,10 +1,22 @@
-language: go
+dist: trusty
 
-go:
-  - 1.16.x
-
-before_install:
-  - go get github.com/mattn/goveralls
-
-script:
-  - $GOPATH/bin/goveralls -service=travis-ci
+jobs:
+  include:
+    - stage: run tests
+      language: go
+      go:
+        - 1.16.x
+      before_install:
+        - go get github.com/mattn/goveralls
+      script:
+        - $GOPATH/bin/goveralls -service=travis-ci
+    - stage: build docker image
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker build -t redis-inventory .
+        - docker images
+        - docker tag redis-inventory $DOCKER_USERNAME/redis-inventory
+        - docker push $DOCKER_USERNAME/redis-inventory
+    - stage: test docker image
+      script: docker run --rm $DOCKER_USERNAME/redis-inventory help
+    - script: docker run --rm $DOCKER_USERNAME/redis-inventory help
