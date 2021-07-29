@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	code.cloudfoundry.org/bytefmt v0.0.0-20210608160410-67692ebc98de
+	github.com/alicebob/miniredis/v2 v2.15.1
 	github.com/hetiansu5/urlquery v1.2.6
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.2.4
