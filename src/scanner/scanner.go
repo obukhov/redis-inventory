@@ -8,15 +8,22 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// RedisServiceInterface abstraction to access redis
+type RedisServiceInterface interface {
+	ScanKeys(ctx context.Context, options adapter.ScanOptions) <-chan string
+	GetKeysCount(ctx context.Context) (int64, error)
+	GetMemoryUsage(ctx context.Context, key string) (int64, error)
+}
+
 // RedisScanner scans redis keys and puts them in a trie
 type RedisScanner struct {
-	redisService adapter.RedisServiceInterface
+	redisService RedisServiceInterface
 	scanProgress adapter.ProgressWriter
 	logger       zerolog.Logger
 }
 
 // NewScanner creates RedisScanner
-func NewScanner(redisService adapter.RedisServiceInterface, scanProgress adapter.ProgressWriter, logger zerolog.Logger) *RedisScanner {
+func NewScanner(redisService RedisServiceInterface, scanProgress adapter.ProgressWriter, logger zerolog.Logger) *RedisScanner {
 	return &RedisScanner{
 		redisService: redisService,
 		scanProgress: scanProgress,
@@ -33,6 +40,7 @@ func (s *RedisScanner) Scan(options adapter.ScanOptions, result *trie.Trie) {
 
 	s.scanProgress.Start(totalCount)
 	for key := range s.redisService.ScanKeys(context.Background(), options) {
+		s.scanProgress.Increment()
 		res, err := s.redisService.GetMemoryUsage(context.Background(), key)
 		if err != nil {
 			s.logger.Error().Err(err).Msgf("Error dumping key %s", key)
@@ -46,7 +54,6 @@ func (s *RedisScanner) Scan(options adapter.ScanOptions, result *trie.Trie) {
 		)
 
 		s.logger.Debug().Msgf("Dump %s value: %d", key, res)
-		s.scanProgress.Increment()
 	}
 	s.scanProgress.Stop()
 }

@@ -14,13 +14,6 @@ type ScanOptions struct {
 	Throttle  int
 }
 
-// RedisServiceInterface abstraction to access redis
-type RedisServiceInterface interface {
-	ScanKeys(ctx context.Context, options ScanOptions) <-chan string
-	GetKeysCount(ctx context.Context) (int64, error)
-	GetMemoryUsage(ctx context.Context, key string) (int64, error)
-}
-
 // NewRedisService creates RedisService
 func NewRedisService(client radix.Client) RedisService {
 	return RedisService{
