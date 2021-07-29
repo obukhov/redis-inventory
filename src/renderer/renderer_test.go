@@ -35,6 +35,28 @@ func (suite *RendererTestSuite) TestNewRender() {
 	}
 }
 
+func (suite *RendererTestSuite) TestNewRenderWithError() {
+	for _, t := range []struct {
+		output       string
+		outputParams string
+	}{
+		{
+			"table",
+			"padSpaces=asd",
+		},
+		{
+			"json",
+			"padSpaces=asd",
+		},
+	} {
+		suite.Run(t.outputParams, func() {
+			renderer, err := NewRenderer(t.output, t.outputParams)
+
+			suite.Assert().Nil(renderer)
+			suite.Assert().Error(err)
+		})
+	}
+}
 func (suite *RendererTestSuite) TestNewRenderError() {
 	renderer, err := NewRenderer("foo", "")
 

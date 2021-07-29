@@ -21,9 +21,70 @@ func (suite *JSONRendererTestSuite) TestRender() {
 	suite.Assert().Nil(err, "Error rendering trie")
 
 	suite.Assert().Equal(
-		"{\"Children\":{\"dev:\":{\"Children\":{\"article:\":{\"Children\":{\"1\":{\"Values\":{\"Params\":{\"BytesSize\":100,\"KeysCount\":1}}},\"2\":{\"Values\":{\"Params\":{\"BytesSize\":100,\"KeysCount\":1}}},\"3\":{\"Values\":{\"Params\":{\"BytesSize\":100,\"KeysCount\":1}}}},\"Values\":{\"Params\":{\"BytesSize\":500,\"KeysCount\":5}},\"Overflow\":2},\"user:\":{\"Children\":{\"bar\":{\"Values\":{\"Params\":{\"BytesSize\":1000,\"KeysCount\":1}}},\"foo\":{\"Values\":{\"Params\":{\"BytesSize\":1000,\"KeysCount\":1}}}},\"Values\":{\"Params\":{\"BytesSize\":2000,\"KeysCount\":2}}}},\"Values\":{\"Params\":{\"BytesSize\":2500,\"KeysCount\":7}}},\"prod:\":{\"Children\":{\"user:\":{\"Children\":{\"bar\":{\"Values\":{\"Params\":{\"BytesSize\":2000,\"KeysCount\":1}}},\"foo\":{\"Values\":{\"Params\":{\"BytesSize\":2000,\"KeysCount\":1}}}},\"Values\":{\"Params\":{\"BytesSize\":4000,\"KeysCount\":2}}}}}},\"Values\":{\"Params\":{\"BytesSize\":6500,\"KeysCount\":9}}}\n",
+		"{\"Children\":{\"dev:\":{\"Children\":{\"article:\":{\"Children\":{\"1\":{\"Values\":{\"Params\":{\"BytesSize\":100,\"KeysCount\":1}}},\"2\":{\"Values\":{\"Params\":{\"BytesSize\":100,\"KeysCount\":1}}}},\"Values\":{\"Params\":{\"BytesSize\":200,\"KeysCount\":2}}}}}},\"Values\":{\"Params\":{\"BytesSize\":200,\"KeysCount\":2}}}\n",
 		buf.String(),
 	)
+}
+
+func (suite *JSONRendererTestSuite) TestRenderWithIndent() {
+	var buf bytes.Buffer
+
+	params, err := NewJSONRendererParams("padSpaces=2")
+	suite.Assert().Nil(err)
+
+	r := JSONRenderer{&buf, params}
+
+	err = r.Render(suite.trie)
+	suite.Assert().Nil(err, "Error rendering trie")
+
+	suite.Assert().Equal(
+		"{\n"+
+			"  \"Children\": {\n"+
+			"    \"dev:\": {\n"+
+			"      \"Children\": {\n"+
+			"        \"article:\": {\n"+
+			"          \"Children\": {\n"+
+			"            \"1\": {\n"+
+			"              \"Values\": {\n"+
+			"                \"Params\": {\n"+
+			"                  \"BytesSize\": 100,\n"+
+			"                  \"KeysCount\": 1\n"+
+			"                }\n"+
+			"              }\n"+
+			"            },\n"+
+			"            \"2\": {\n"+
+			"              \"Values\": {\n"+
+			"                \"Params\": {\n"+
+			"                  \"BytesSize\": 100,\n"+
+			"                  \"KeysCount\": 1\n"+
+			"                }\n"+
+			"              }\n"+
+			"            }\n"+
+			"          },\n"+
+			"          \"Values\": {\n"+
+			"            \"Params\": {\n"+
+			"              \"BytesSize\": 200,\n"+
+			"              \"KeysCount\": 2\n"+
+			"            }\n"+
+			"          }\n"+
+			"        }\n"+
+			"      }\n"+
+			"    }\n"+
+			"  },\n"+
+			"  \"Values\": {\n"+
+			"    \"Params\": {\n"+
+			"      \"BytesSize\": 200,\n"+
+			"      \"KeysCount\": 2\n"+
+			"    }\n"+
+			"  }\n"+
+			"}\n",
+		buf.String(),
+	)
+}
+
+func (suite *JSONRendererTestSuite) TestNewJSONRendererParams() {
+	_, err := NewJSONRendererParams("padSpaces=asd")
+	suite.Assert().Error(err)
 }
 
 func (suite *JSONRendererTestSuite) SetupTest() {
@@ -31,13 +92,6 @@ func (suite *JSONRendererTestSuite) SetupTest() {
 
 	suite.setupTrieKey("dev:article:1", 100)
 	suite.setupTrieKey("dev:article:2", 100)
-	suite.setupTrieKey("dev:article:3", 100)
-	suite.setupTrieKey("dev:article:4", 100)
-	suite.setupTrieKey("dev:article:5", 100)
-	suite.setupTrieKey("dev:user:bar", 1000)
-	suite.setupTrieKey("dev:user:foo", 1000)
-	suite.setupTrieKey("prod:user:bar", 2000)
-	suite.setupTrieKey("prod:user:foo", 2000)
 }
 
 func (suite *JSONRendererTestSuite) setupTrieKey(key string, value int64) {
