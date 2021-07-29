@@ -54,9 +54,19 @@ func (suite *RedisServiceTestSuite) TestScan() {
 	suite.Assert().Equal("dev:key2", key2)
 
 	m.Close()
-
 }
 
+func (suite *RedisServiceTestSuite) TestScanMatch() {
+	service, m := suite.createRedis()
+
+	res := service.ScanKeys(context.Background(), ScanOptions{ScanCount: 1000, Pattern: "*:key1"})
+
+	key1 := <-res
+	suite.Assert().Equal("dev:key1", key1)
+
+	m.Close()
+
+}
 func TestRedisServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(RedisServiceTestSuite))
 }
