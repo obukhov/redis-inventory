@@ -1,6 +1,5 @@
-os: linux
 dist: trusty
-language: go
+
 jobs:
   include:
     - stage: run tests
