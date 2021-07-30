@@ -56,6 +56,8 @@ go run main.go inventory <host>:<port> [--output=<output type>] [--output-params
 | padSpaces    | Number of spaces to indent the nested level    | `0`       |
 | padding      | Use custom character to pad nested level       | `""`      |
 | depth        | Maximum nesting level for keys before grouping | 10        |
+| human        | Display numbers in human-friendly way (0 or 1) | 0         |
+
 
 
 If padding is not specified in either way, nested keys are displayed with full paths as following:
