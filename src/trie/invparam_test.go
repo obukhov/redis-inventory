@@ -1,7 +1,6 @@
 package trie
 
 import (
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
@@ -12,10 +11,10 @@ type InvParamTestSuite struct {
 
 
 func (suite *InvParamTestSuite) TestKeyPanic() {
-  suite.Assert().Panics(t, func(){
-    p := InvParam(9999)
-    p.String()
-  })
+	suite.Assert().Panics(suite.T(), func(){
+		p := InvParam(9999)
+		p.String()
+	})
 }
 
 func TestInvParamTestSuite(t *testing.T) {
