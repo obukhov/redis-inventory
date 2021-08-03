@@ -11,7 +11,7 @@ type InvParamTestSuite struct {
 
 
 func (suite *InvParamTestSuite) TestKeyPanic() {
-	suite.Assert().Panics(suite.T(), func(){
+	suite.Assert().Panics(func(){
 		p := InvParam(9999)
 		p.String()
 	})
