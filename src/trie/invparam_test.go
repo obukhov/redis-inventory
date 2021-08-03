@@ -9,11 +9,10 @@ type InvParamTestSuite struct {
 	suite.Suite
 }
 
-
-func (suite *InvParamTestSuite) TestKeyPanic() {
-	suite.Assert().Panics(func(){
+func (suite *InvParamTestSuite) TestStringPanic() {
+	suite.Assert().Panics(func() {
 		p := InvParam(9999)
-		p.String()
+		_ = p.String()
 	})
 }
 
