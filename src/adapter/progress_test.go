@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"bytes"
 	"github.com/jedib0t/go-pretty/v6/progress"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -66,6 +67,36 @@ func (suite ProgressWriterTestSuite) TestIncrement() {
 
 	pwMock.AssertExpectations(suite.T())
 	trackerMock.AssertExpectations(suite.T())
+}
+
+// Dumbest test I've ever written
+func (suite ProgressWriterTestSuite) TestInit() {
+	var buf bytes.Buffer
+	pwMock := &ProgressMock{}
+	style := progress.Style{}
+
+	pwMock.On("SetAutoStop", mock.Anything)
+	pwMock.On("SetTrackerLength", mock.Anything)
+	pwMock.On("ShowETA", mock.Anything)
+	pwMock.On("ShowOverallTracker", mock.Anything)
+	pwMock.On("ShowTime", mock.Anything)
+	pwMock.On("ShowTracker", mock.Anything)
+	pwMock.On("ShowValue", mock.Anything)
+	pwMock.On("SetMessageWidth", mock.Anything)
+	pwMock.On("SetNumTrackersExpected", mock.Anything)
+	pwMock.On("SetSortBy", mock.Anything)
+	pwMock.On("SetStyle", mock.Anything)
+	pwMock.On("SetTrackerPosition", mock.Anything)
+	pwMock.On("SetUpdateFrequency", mock.Anything)
+	pwMock.On("SetOutputWriter", &buf)
+	pwMock.On("Style").Return(&style)
+
+	prettyProgressWriter := &PrettyProgressWriter{
+		pw:      pwMock,
+		tracker: nil,
+	}
+
+	prettyProgressWriter.init(&buf)
 }
 
 func TestProgressWriterTestSuite(t *testing.T) {
