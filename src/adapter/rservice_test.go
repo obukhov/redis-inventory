@@ -67,6 +67,7 @@ func (suite *RedisServiceTestSuite) TestScanMatch() {
 	m.Close()
 
 }
+
 func TestRedisServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(RedisServiceTestSuite))
 }

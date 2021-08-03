@@ -1,10 +1,9 @@
 package adapter
 
 import (
+	"github.com/jedib0t/go-pretty/v6/progress"
 	"io"
 	"time"
-
-	"github.com/jedib0t/go-pretty/v6/progress"
 )
 
 // ProgressWriter abstraction of progress writer
@@ -19,37 +18,48 @@ type ProgressWriter interface {
 
 // NewPrettyProgressWriter creates PrettyProgressWriter
 func NewPrettyProgressWriter(output io.Writer) *PrettyProgressWriter {
-	pw := progress.NewWriter()
-	pw.SetAutoStop(false)
-	pw.SetTrackerLength(50)
-	pw.ShowETA(true)
-	pw.ShowOverallTracker(false)
-	pw.ShowTime(true)
-	pw.ShowTracker(true)
-	pw.ShowValue(true)
-	pw.SetMessageWidth(13)
-	pw.SetNumTrackersExpected(1)
-	pw.SetSortBy(progress.SortByPercentDsc)
-	pw.SetStyle(progress.StyleDefault)
-	pw.SetTrackerPosition(progress.PositionRight)
-	pw.SetUpdateFrequency(time.Millisecond * 10)
-	pw.Style().Colors = progress.StyleColorsExample
-	pw.Style().Options.PercentFormat = "%4.1f%%"
-	pw.SetOutputWriter(output)
+	p := &PrettyProgressWriter{pw: progress.NewWriter()}
+	p.init(output)
 
-	return &PrettyProgressWriter{pw: pw}
+	return p
 }
 
 // PrettyProgressWriter progress writer using go-pretty/progress library
 type PrettyProgressWriter struct {
 	pw      progress.Writer
-	tracker *progress.Tracker
+	tracker Tracker
+}
+
+// Tracker is abstraction over libraries "Tracker" struct
+type Tracker interface {
+	Increment(value int64)
+	MarkAsDone()
+}
+
+func (p *PrettyProgressWriter) init(output io.Writer) {
+	p.pw.SetAutoStop(false)
+	p.pw.SetTrackerLength(50)
+	p.pw.ShowETA(true)
+	p.pw.ShowOverallTracker(false)
+	p.pw.ShowTime(true)
+	p.pw.ShowTracker(true)
+	p.pw.ShowValue(true)
+	p.pw.SetMessageWidth(13)
+	p.pw.SetNumTrackersExpected(1)
+	p.pw.SetSortBy(progress.SortByPercentDsc)
+	p.pw.SetStyle(progress.StyleDefault)
+	p.pw.SetTrackerPosition(progress.PositionRight)
+	p.pw.SetUpdateFrequency(time.Millisecond * 10)
+	p.pw.Style().Colors = progress.StyleColorsExample
+	p.pw.Style().Options.PercentFormat = "%4.1f%%"
+	p.pw.SetOutputWriter(output)
 }
 
 // Start initiates progress writing progress, if total is unknown should be zero
 func (p *PrettyProgressWriter) Start(total int64) {
-	p.tracker = &progress.Tracker{Message: "Scanning keys", Total: total, Units: progress.UnitsDefault}
-	p.pw.AppendTracker(p.tracker)
+	scanningKeysTracker := &progress.Tracker{Message: "Scanning keys", Total: total, Units: progress.UnitsDefault}
+	p.pw.AppendTracker(scanningKeysTracker)
+	p.tracker = scanningKeysTracker
 
 	go p.pw.Render()
 }
@@ -62,6 +72,5 @@ func (p *PrettyProgressWriter) Increment() {
 // Stop labels progress as finished and stops updating progress
 func (p *PrettyProgressWriter) Stop() {
 	p.tracker.MarkAsDone()
-	p.tracker.PercentDone()
 	p.pw.Stop()
 }
