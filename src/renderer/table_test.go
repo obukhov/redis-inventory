@@ -18,7 +18,7 @@ func (suite *TableRendererTestSuite) TestRenderSpacePadding() {
 
 	r := TableRenderer{&buf, TableRendererParams{10, "", 2, false, "  "}}
 
-	err := r.Render(suite.trie)
+	err := r.Render(suite.trie.Root())
 	suite.Assert().Nil(err, "Error rendering trie")
 
 	suite.Assert().Equal(
@@ -48,7 +48,7 @@ func (suite *TableRendererTestSuite) TestRenderFullPathAndDepthLimit() {
 
 	r := TableRenderer{&buf, TableRendererParams{Depth: 2}}
 
-	err := r.Render(suite.trie)
+	err := r.Render(suite.trie.Root())
 	suite.Assert().Nil(err, "Error rendering trie")
 
 	suite.Assert().Equal(
@@ -76,7 +76,7 @@ func (suite *TableRendererTestSuite) TestRenderHuman() {
 		suite.setupTrieKey(fmt.Sprintf("dev:blog:%d", i), 2)
 	}
 
-	err := r.Render(suite.trie)
+	err := r.Render(suite.trie.Root())
 	suite.Assert().Nil(err, "Error rendering trie")
 
 	suite.Assert().Equal(

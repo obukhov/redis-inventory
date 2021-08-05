@@ -26,6 +26,14 @@ type JSONRendererParams struct {
 	PaddingSpaceCount int    `query:"padSpaces"`
 }
 
+// NewJSONRenderer creates JSONRenderer
+func NewJSONRenderer(output io.Writer, params JSONRendererParams) JSONRenderer {
+	return JSONRenderer{
+		output: output,
+		params: params,
+	}
+}
+
 // JSONRenderer renders trie in the JSON format
 type JSONRenderer struct {
 	output io.Writer
@@ -33,7 +41,7 @@ type JSONRenderer struct {
 }
 
 // Render executes rendering
-func (o JSONRenderer) Render(trie *trie.Trie) error {
+func (o JSONRenderer) Render(root *trie.Node) error {
 	encoder := json.NewEncoder(o.output)
 
 	indent := o.params.Padding + strings.Repeat(" ", o.params.PaddingSpaceCount)
@@ -41,5 +49,5 @@ func (o JSONRenderer) Render(trie *trie.Trie) error {
 		encoder.SetIndent("", indent)
 	}
 
-	return encoder.Encode(trie.Root())
+	return encoder.Encode(root)
 }

@@ -1,4 +1,4 @@
-package cmd
+package app
 
 import (
 	"context"
@@ -13,15 +13,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	output, outputParams, separators, pattern string
-	maxChildren, scanCount, throttleNs        int
-)
-
 var scanCmd = &cobra.Command{
 	Use:   "inventory [sourceHost:port]",
-	Short: "",
-	Long:  "",
+	Short: "Scan keys space and display right away with selected output and output params",
+	Long:  "Scan command builds prefix tree in memory and then displays with different parameters. To use different ways of display without reindexing redis instance every time, use `index` and `display` commands",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		consoleLogger := logger.NewConsoleLogger(logLevel)
@@ -53,7 +48,7 @@ var scanCmd = &cobra.Command{
 			consoleLogger.Fatal().Err(err).Msg("Can't create renderer")
 		}
 
-		err = r.Render(resultTrie)
+		err = r.Render(resultTrie.Root())
 		if err != nil {
 			consoleLogger.Fatal().Err(err).Msg("Can't render report")
 		}
@@ -63,7 +58,7 @@ var scanCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(scanCmd)
+	RootCmd.AddCommand(scanCmd)
 	scanCmd.Flags().StringVarP(&output, "output", "o", "table", "One of possible outputs: json, jsonp, table")
 	scanCmd.Flags().StringVarP(&outputParams, "output-params", "p", "", "Parameters specific for output type")
 	scanCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")

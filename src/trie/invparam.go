@@ -1,6 +1,9 @@
 package trie
 
-import "strconv"
+import (
+	"errors"
+	"strconv"
+)
 
 // InvParam represent type or inventory parameter
 type InvParam uint
@@ -27,4 +30,21 @@ func (p InvParam) String() string {
 // MarshalText renders InvParam as a string when marshalling
 func (p InvParam) MarshalText() (text []byte, err error) {
 	return []byte(p.String()), nil
+}
+
+// UnmarshalText decodes InvParam value from string
+func (p *InvParam) UnmarshalText(text []byte) error {
+	var tmp InvParam
+	switch string(text) {
+	case "BytesSize":
+		tmp = BytesSize
+	case "KeysCount":
+		tmp = KeysCount
+	default:
+		return errors.New("Unknown InvParam " + string(text))
+	}
+
+	*p = tmp
+
+	return nil
 }

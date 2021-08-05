@@ -9,7 +9,7 @@ import (
 // Renderer abstraction for rendering trie to a given output
 type Renderer interface {
 	// Render executes rendering
-	Render(trie *trie.Trie) error
+	Render(root *trie.Node) error
 }
 
 // NewRenderer creates Renderer implementation by type and set of params

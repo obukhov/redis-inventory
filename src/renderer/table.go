@@ -48,10 +48,10 @@ type TableRenderer struct {
 }
 
 // Render executes rendering
-func (o TableRenderer) Render(trie *trie.Trie) error {
+func (o TableRenderer) Render(root *trie.Node) error {
 	t := table.NewWriter()
 	t.AppendHeader(table.Row{"Key", "ByteSize", "KeysCount"})
-	o.appendLevel(t, trie.Root(), 1, "")
+	o.appendLevel(t, root, 1, "")
 
 	t.SetColumnConfigs([]table.ColumnConfig{
 		{Number: 1},

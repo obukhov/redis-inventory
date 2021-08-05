@@ -17,7 +17,7 @@ func (suite *JSONRendererTestSuite) TestRender() {
 
 	r := JSONRenderer{&buf, JSONRendererParams{}}
 
-	err := r.Render(suite.trie)
+	err := r.Render(suite.trie.Root())
 	suite.Assert().Nil(err, "Error rendering trie")
 
 	suite.Assert().Equal(
@@ -34,7 +34,7 @@ func (suite *JSONRendererTestSuite) TestRenderWithIndent() {
 
 	r := JSONRenderer{&buf, params}
 
-	err = r.Render(suite.trie)
+	err = r.Render(suite.trie.Root())
 	suite.Assert().Nil(err, "Error rendering trie")
 
 	suite.Assert().Equal(

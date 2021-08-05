@@ -1,7 +1,9 @@
 package main
 
-import "github.com/obukhov/redis-inventory/cmd"
+import (
+	"github.com/obukhov/redis-inventory/cmd/app"
+)
 
 func main() {
-	cmd.Execute()
+	app.Execute()
 }
