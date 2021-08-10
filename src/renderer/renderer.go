@@ -29,6 +29,14 @@ func NewRenderer(output, paramsString string) (Renderer, error) {
 		}
 
 		return JSONRenderer{os.Stdout, params}, nil
+
+	case "chart":
+		params, err := NewChartRendererParams(paramsString)
+		if err != nil {
+			return nil, err
+		}
+
+		return ChartRenderer{params}, nil
 	default:
 		return nil, errors.New("unknown render type")
 	}

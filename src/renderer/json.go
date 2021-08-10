@@ -20,7 +20,7 @@ func NewJSONRendererParams(paramsSerialized string) (JSONRendererParams, error) 
 	return params, nil
 }
 
-// JSONRendererParams represents rendering params fr Json renderer
+// JSONRendererParams represents rendering params for Json renderer
 type JSONRendererParams struct {
 	Padding           string `query:"padding"`
 	PaddingSpaceCount int    `query:"padSpaces"`
