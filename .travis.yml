@@ -11,7 +11,7 @@ jobs:
       script:
         - $GOPATH/bin/goveralls -service=travis-ci
     - stage: build docker image
-      if: branch = master
+      if: type != pull_request AND branch = master
       script:
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker build -t redis-inventory .
@@ -19,5 +19,5 @@ jobs:
         - docker tag redis-inventory $DOCKER_USERNAME/redis-inventory
         - docker push $DOCKER_USERNAME/redis-inventory
     - stage: test docker image
-      if: branch = master
+      if: type != pull_request AND branch = master
       script: docker run --rm $DOCKER_USERNAME/redis-inventory help
