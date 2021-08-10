@@ -42,9 +42,10 @@ type ChartRenderer struct {
 
 // Render executes rendering
 func (o ChartRenderer) Render(root *trie.Node) error {
+	result := o.toNode(root, "Total", "")
+	result.Children = o.convertChildren(root, 0, "")
 
-	result := o.convertChildren(root, 0, "")
-	s, err := json.Marshal(result)
+	s, err := json.Marshal([]Node{result})
 	if err != nil {
 		return err
 	}
@@ -66,13 +67,16 @@ func (o ChartRenderer) Render(root *trie.Node) error {
 				// set the container id
 				chart.container("chart");
 				chart.calculationMode("parent-dependent");
+				chart.labels().position("radial");
 
 				// configure labels
 				chart.labels().format("{%name}");
 
 				// configure tooltips
 				chart.tooltip().useHtml(true);
-				chart.tooltip().format("<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman}");
+				chart.tooltip().format(
+					"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
+				);
 
 				// initiate drawing the chart
 				chart.draw();
@@ -97,13 +101,7 @@ func (o ChartRenderer) convertChildren(node *trie.Node, level int, prefix string
 			key = key + strings.Join(keys, "")
 		}
 
-		value := childNode.Aggregator().Params[trie.BytesSize]
-		item := Node{
-			Name:       key,
-			Value:      value,
-			ValueHuman: bytefmt.ByteSize(uint64(value)),
-			FullPath:   prefix + key,
-		}
+		item := o.toNode(childNode, key, prefix)
 
 		if level < o.params.Depth && node.OverflowChildrenCount == 0 {
 			item.Children = o.convertChildren(childNode, nextLevel, prefix+key)
@@ -119,11 +117,24 @@ func (o ChartRenderer) convertChildren(node *trie.Node, level int, prefix string
 	return result
 }
 
+func (o ChartRenderer) toNode(childNode *trie.Node, key string, prefix string) Node {
+	value := childNode.Aggregator().Params[trie.BytesSize]
+	item := Node{
+		Name:       key,
+		Value:      value,
+		KeysCount:  childNode.Aggregator().Params[trie.KeysCount],
+		ValueHuman: bytefmt.ByteSize(uint64(value)),
+		FullPath:   prefix + key,
+	}
+	return item
+}
+
 // Node structure for serialized json of anychart library
 type Node struct {
 	Name       string `json:"name"`
 	Value      int64  `json:"value"`
 	ValueHuman string `json:"valueHuman"`
 	FullPath   string `json:"pathFull"`
+	KeysCount  int64  `json:"keys"`
 	Children   []Node `json:"children"`
 }

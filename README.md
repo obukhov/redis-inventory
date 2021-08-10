@@ -42,6 +42,11 @@ Outputs it as a nice table
 12:39PM INF Finish scanning
 ```
 
+It also can render sunburst diagrams to visualize it:
+
+[![Full sunburst diagram](docs/images/full-diagram600.png)](docs/images/full-diagram.png)
+[![Zoomed diagram](docs/images/zoomed-diagram600.png)](docs/images/zoomed-diagram.png)
+
 Read more about [usage](docs/usage.md)
 
 ## Installation
