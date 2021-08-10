@@ -6,14 +6,17 @@ Redis Inventory
 [![Go Report Card](https://goreportcard.com/badge/github.com/obukhov/redis-inventory)](https://goreportcard.com/report/github.com/obukhov/redis-inventory)
 [![Docker Pulls](https://img.shields.io/docker/pulls/dclg/redis-inventory)](https://hub.docker.com/repository/docker/dclg/redis-inventory)
 
-Tool to see redis memory usage by keys in hierarchical way.
+Redis inventory is a tool to analyse Redis memory usage by key patterns and displaying it hierarchically. The name is
+inspired by "Disk Inventory X" tool doing similar analysis for disk usage.
 
 Example:
+
 ```bash
-$ go run main.go inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
+$ redis-inventory inventory <host>:<port> --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
 ```
 
 Outputs it as a nice table
+
 ```bash
 12:39PM INF Start scanning
 +---------------------+----------+-----------+
@@ -39,48 +42,21 @@ Outputs it as a nice table
 12:39PM INF Finish scanning
 ```
 
-Not all the features are implemented, for details see the [project](https://github.com/obukhov/redis-inventory/projects/1)
+Read more about [usage](docs/usage.md)
 
-## General interface
+## Installation
+
+There are several ways to install this tools:
+
+- using docker
+- building from sources
+
+### Using docker
+
+To run the tool from a docker image, run the command:
 
 ```bash
-go run main.go inventory <host>:<port> [--output=<output type>] [--output-params=<querstring serialized params>]
+docker run --rm dclg/redis-inventory inventory <HOST>:<PORT>
 ```
 
-## Output type
-
-### Table
-
-| Option name  | Description                                    | Default   |
-|--------------|------------------------------------------------|-----------|
-| padSpaces    | Number of spaces to indent the nested level    | `0`       |
-| padding      | Use custom character to pad nested level       | `""`      |
-| depth        | Maximum nesting level for keys before grouping | 10        |
-| human        | Display numbers in human-friendly way (0 or 1) | 0         |
-
-
-
-If padding is not specified in either way, nested keys are displayed with full paths as following:
-```bash
-+----------------------+----------+-----------+
-| KEY                  | BYTESIZE | KEYSCOUNT |
-+----------------------+----------+-----------+
-| dev:                 |     2.9M |     4,555 |
-| dev:article:         |   413.7K |       616 |
-| dev:blogpost:        |   408.5K |       630 |
-| dev:collections:     |   426.7K |       627 |
-| dev:events:          |   391.2K |       614 |
-| dev:friends:foobar:  |   501.1K |       745 |
-| dev:news:            |   388.8K |       593 |
-| dev:user:            |     481K |       730 |
-...
-```
-
-### Json
-
-| Option name  | Description                                  | Default   |
-|--------------|----------------------------------------------|-----------|
-| padSpaces    | Number of spaces to indent the nested level  | `0`       |
-| padding      | Use custom character to pad nested level     | `""`      |
-
-If padding is not specified in either way json is not pretty-printed.
+Read more about [installation](docs/installation.md)

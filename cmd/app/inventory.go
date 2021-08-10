@@ -15,8 +15,8 @@ import (
 
 var scanCmd = &cobra.Command{
 	Use:   "inventory [sourceHost:port]",
-	Short: "Scan keys space and display right away with selected output and output params",
-	Long:  "Scan command builds prefix tree in memory and then displays with different parameters. To use different ways of display without reindexing redis instance every time, use `index` and `display` commands",
+	Short: "Scan keys and display summary right away with selected output and output params",
+	Long:  "Scan command builds prefix tree in memory and then displays the usage summary. To avoid scanning redis instance when trying different output formats use `index` and `display` commands",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		consoleLogger := logger.NewConsoleLogger(logLevel)
