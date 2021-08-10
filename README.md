@@ -6,14 +6,17 @@ Redis Inventory
 [![Go Report Card](https://goreportcard.com/badge/github.com/obukhov/redis-inventory)](https://goreportcard.com/report/github.com/obukhov/redis-inventory)
 [![Docker Pulls](https://img.shields.io/docker/pulls/dclg/redis-inventory)](https://hub.docker.com/repository/docker/dclg/redis-inventory)
 
-Tool to see redis memory usage by keys in hierarchical way.
+Redis inventory is a tool to analyse redis memory usage by keys patterns and displaying it in hierarchically. The name
+is inspired by "Disk Inventory X" tool doing similar analysis for disk usage.
 
 Example:
+
 ```bash
 $ redis-inventory inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
 ```
 
 Outputs it as a nice table
+
 ```bash
 12:39PM INF Start scanning
 +---------------------+----------+-----------+
@@ -44,6 +47,7 @@ Read more about [usage](docs/usage.md)
 ## Installation
 
 There are several ways to install this tools:
+
 - using docker
 - building from sources
 
@@ -110,3 +114,24 @@ $ ri display --output-params="depth=1&human=1&padding=🔥"
 ```
 
 ### Building from sources
+
+You have to have [golang installed](https://golang.org/doc/install) on your computer.
+
+1. Checkout the repository:
+
+```bash
+git clone git@github.com:obukhov/redis-inventory.git
+```
+
+2. Build a binary:
+
+```bash
+cd redis-inventory
+go build -o redis-inventory main.go
+```
+
+3. Run it or move it one of your PATH directories:
+
+```bash
+mv redis-inventory /usr/local/bin/
+```

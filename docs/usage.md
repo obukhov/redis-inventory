@@ -49,7 +49,19 @@ If padding is not specified in either way json is not pretty-printed.
 You can scan redis instance once and then use different visualisations. For scanning use `index` command. To display
 cached index use `display` command.
 
-### See more
+## Customising level separators
+
+It is quite common to use ":" as a level separator in redis. Sometimes, though, you want to use other punctuation (for
+example "_" or "-") to also be a level separator. Redis-inventory can use custom characters for splitting keys:
+
+```bash
+redis-inventory inventory <host>:<port> --separators=":_-"
+```
+
+It will work even if those characters sometimes are used not for level separation, as a node with just one child will
+automatically be merged with it.
+
+## See more
 
 - [index command](cobra/redis-inventory_index.md)
 - [display command](cobra/redis-inventory_display.md)
