@@ -10,7 +10,7 @@ Tool to see redis memory usage by keys in hierarchical way.
 
 Example:
 ```bash
-$ go run main.go inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
+$ redis-inventory inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
 ```
 
 Outputs it as a nice table
@@ -39,48 +39,74 @@ Outputs it as a nice table
 12:39PM INF Finish scanning
 ```
 
-Not all the features are implemented, for details see the [project](https://github.com/obukhov/redis-inventory/projects/1)
+Read more about [usage](docs/usage.md)
 
-## General interface
+## Installation
+
+There are several ways to install this tools:
+- using docker
+- building from sources
+
+### Using docker
+
+To run the tool from a docker image, run the command:
 
 ```bash
-go run main.go inventory <host>:<port> [--output=<output type>] [--output-params=<querstring serialized params>]
+docker run --rm dclg/redis-inventory inventory <HOST>:<PORT>
 ```
 
-## Output type
+If you plan to run sequence of `index` and `display` so want to utilize file cache, add volume mount to local dir.
 
-### Table
-
-| Option name  | Description                                    | Default   |
-|--------------|------------------------------------------------|-----------|
-| padSpaces    | Number of spaces to indent the nested level    | `0`       |
-| padding      | Use custom character to pad nested level       | `""`      |
-| depth        | Maximum nesting level for keys before grouping | 10        |
-| human        | Display numbers in human-friendly way (0 or 1) | 0         |
-
-
-
-If padding is not specified in either way, nested keys are displayed with full paths as following:
 ```bash
-+----------------------+----------+-----------+
-| KEY                  | BYTESIZE | KEYSCOUNT |
-+----------------------+----------+-----------+
-| dev:                 |     2.9M |     4,555 |
-| dev:article:         |   413.7K |       616 |
-| dev:blogpost:        |   408.5K |       630 |
-| dev:collections:     |   426.7K |       627 |
-| dev:events:          |   391.2K |       614 |
-| dev:friends:foobar:  |   501.1K |       745 |
-| dev:news:            |   388.8K |       593 |
-| dev:user:            |     481K |       730 |
-...
+docker run --rm -v "$PWD:/tmp" dclg/redis-inventory index <HOST>:<PORT>
 ```
 
-### Json
+If you use the tool regularly, create an alias:
 
-| Option name  | Description                                  | Default   |
-|--------------|----------------------------------------------|-----------|
-| padSpaces    | Number of spaces to indent the nested level  | `0`       |
-| padding      | Use custom character to pad nested level     | `""`      |
+```bash
+alias ri="docker run --rm -v "$PWD:/tmp" dclg/redis-inventory"
+```
 
-If padding is not specified in either way json is not pretty-printed.
+So you can run it just like so:
+
+```bash
+$ ri index <host>:<port>
+11:52PM INF Start indexing
+Scanning keys ... done! [3.18K in 262ms]
+11:52PM INF Finish scanning and saved index as a file /tmp/redis-inventory.json
+
+$ ri display --output-params="depth=2&padSpaces=2"
+11:53PM INF Loading index
++---------------------+----------+-----------+
+| KEY                 | BYTESIZE | KEYSCOUNT |
++---------------------+----------+-----------+
+|   dev:              |  1053120 |      1587 |
+|     article:        |   142824 |       210 |
+|     blogpost:       |   153416 |       240 |
+|     collections:    |   145912 |       217 |
+|     events:         |   144360 |       217 |
+|     friends:foobar: |   169040 |       249 |
+|     news:           |   124944 |       191 |
+|     user:           |   172624 |       263 |
+|   prod:             |  1078048 |      1589 |
+|     article:        |   157264 |       231 |
+|     blogpost:       |   145632 |       214 |
+|     collections:    |   165992 |       240 |
+|     events:         |   143536 |       219 |
+|     friends:foobar: |   168864 |       251 |
+|     news:           |   132096 |       197 |
+|     user:           |   164664 |       237 |
++---------------------+----------+-----------+
+11:53PM INF Done
+
+$ ri display --output-params="depth=1&human=1&padding=🔥"
+11:57PM INF Loading index
++---------+----------+-----------+
+| KEY     | BYTESIZE | KEYSCOUNT |
++---------+----------+-----------+
+| 🔥dev:  |       1M |     1,587 |
+| 🔥prod: |       1M |     1,589 |
++---------+----------+-----------+
+```
+
+### Building from sources

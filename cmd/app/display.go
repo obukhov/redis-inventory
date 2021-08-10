@@ -11,7 +11,7 @@ import (
 
 var displayCmd = &cobra.Command{
 	Use:   "display",
-	Short: "Render cached keyspace index without scanning the instance again",
+	Short: "Reads cached usage data created with `index` command and displays according to output and output params",
 	Long:  "It can be useful to play with different display params, for example: depth, padding, human readable formatting",
 	Args:  cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {

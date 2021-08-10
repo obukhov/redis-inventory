@@ -14,8 +14,8 @@ import (
 
 var indexCmd = &cobra.Command{
 	Use:   "index [sourceHost:port]",
-	Short: "Scan keys space and save the index as temporary file for further display with display command",
-	Long:  "Keep in mind that there are scanning options and displaying options, if the instance was indexed with maxChildren=10 it cannot be changed in display unlike depth parameter",
+	Short: "Scan keys and save prefix tree in a temporary file for further rendering with display command",
+	Long:  "Keep in mind that some options are scanning (index) options that cannot be redefined later. For example, `maxChildren` changes the way index data is built, unlike `depth` parameter only influencing rendering",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		consoleLogger := logger.NewConsoleLogger(logLevel)
