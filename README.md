@@ -12,7 +12,7 @@ inspired by "Disk Inventory X" tool doing similar analysis for disk usage.
 Example:
 
 ```bash
-$ redis-inventory inventory localhost:63795 --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
+$ redis-inventory inventory <host>:<port> --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
 ```
 
 Outputs it as a nice table

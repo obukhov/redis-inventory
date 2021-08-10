@@ -4,7 +4,7 @@ Scan keys and display summary right away with selected output and output params
 
 ### Synopsis
 
-Scan command builds prefix tree in memory and then displays usage summary. To play with different ways of display without reindexing redis instance every time, use `index` and `display` commands
+Scan command builds prefix tree in memory and then displays the usage summary. To avoid scanning redis instance when trying different output formats use `index` and `display` commands
 
 ```
 redis-inventory inventory [sourceHost:port] [flags]
