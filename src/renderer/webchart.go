@@ -115,43 +115,46 @@ func (o ChartRenderer) renderPage(result Node) (string, error) {
 
 	rendered := `<html>
 		<head>
-			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
-			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-sunburst.min.js"></script>
+			<script src="//unpkg.com/sunburst-chart"></script>
 		</head>
 		<body>
 			<div id="chart"></div>
 			<script type="text/javascript">
-				// create data
-				var data = ` + string(s) + `;
-
-				// create a chart and set the data
-				var chart = anychart.sunburst(data, "as-tree");
-
-				// set the container id
-				chart.container("chart");
-				chart.calculationMode("parent-dependent");
-
-				// configure the visual settings of the chart
-				//chart.palette(anychart.palettes.default);
-				chart.fill(function () {
-				  return this.parent && this.level > 1 ?
-				   anychart.color.lighten(this.parentColor, 0.2) :
-				   this.mainColor;
-				});
-
-				chart.labels().position("radial");
-
-				// configure labels
-				chart.labels().format("{%name}");
-
-				// configure tooltips
-				chart.tooltip().useHtml(true);
-				chart.tooltip().format(
-					"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
-				);
-
-				// initiate drawing the chart
-				chart.draw();
+				const myChart = Sunburst();
+				myChart
+					.data(` + string(s) + `)
+					('chart');
+				//// create data
+				//var data = ;
+				//
+				//// create a chart and set the data
+				//var chart = anychart.sunburst(data, "as-tree");
+				//
+				//// set the container id
+				//chart.container("chart");
+				//chart.calculationMode("parent-dependent");
+				//
+				//// configure the visual settings of the chart
+				////chart.palette(anychart.palettes.default);
+				//chart.fill(function () {
+				//  return this.parent && this.level > 1 ?
+				//   anychart.color.lighten(this.parentColor, 0.2) :
+				//   this.mainColor;
+				//});
+				//
+				//chart.labels().position("radial");
+				//
+				//// configure labels
+				//chart.labels().format("{%name}");
+				//
+				//// configure tooltips
+				//chart.tooltip().useHtml(true);
+				//chart.tooltip().format(
+				//	"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
+				//);
+				//
+				//// initiate drawing the chart
+				//chart.draw();
 			</script>
 		</body>
 	</html>
