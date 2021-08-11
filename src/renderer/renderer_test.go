@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
@@ -27,7 +28,7 @@ func (suite *RendererTestSuite) TestNewRender() {
 		},
 	} {
 		suite.Run(t.outputParams, func() {
-			renderer, err := NewRenderer(t.output, t.outputParams)
+			renderer, err := NewRenderer(t.output, t.outputParams, zerolog.Nop())
 
 			suite.Assert().Nil(err)
 			suite.Assert().IsTypef(t.expectedType, renderer, "Unexpected type")
@@ -50,7 +51,7 @@ func (suite *RendererTestSuite) TestNewRenderWithError() {
 		},
 	} {
 		suite.Run(t.outputParams, func() {
-			renderer, err := NewRenderer(t.output, t.outputParams)
+			renderer, err := NewRenderer(t.output, t.outputParams, zerolog.Nop())
 
 			suite.Assert().Nil(renderer)
 			suite.Assert().Error(err)
@@ -58,7 +59,7 @@ func (suite *RendererTestSuite) TestNewRenderWithError() {
 	}
 }
 func (suite *RendererTestSuite) TestNewRenderError() {
-	renderer, err := NewRenderer("foo", "")
+	renderer, err := NewRenderer("foo", "", zerolog.Nop())
 
 	suite.Assert().NotNil(err)
 	suite.Assert().Nil(renderer)

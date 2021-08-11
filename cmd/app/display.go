@@ -31,7 +31,7 @@ var displayCmd = &cobra.Command{
 			consoleLogger.Fatal().Err(err).Msg("Can't decode file")
 		}
 
-		r, err := renderer.NewRenderer(output, outputParams)
+		r, err := renderer.NewRenderer(output, outputParams, consoleLogger)
 		if err != nil {
 			consoleLogger.Fatal().Err(err).Msg("Can't create renderer")
 		}

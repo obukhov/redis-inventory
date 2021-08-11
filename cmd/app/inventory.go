@@ -43,7 +43,7 @@ var scanCmd = &cobra.Command{
 			resultTrie,
 		)
 
-		r, err := renderer.NewRenderer(output, outputParams)
+		r, err := renderer.NewRenderer(output, outputParams, consoleLogger)
 		if err != nil {
 			consoleLogger.Fatal().Err(err).Msg("Can't create renderer")
 		}

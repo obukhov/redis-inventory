@@ -4,16 +4,14 @@ import (
 	"code.cloudfoundry.org/bytefmt"
 	"encoding/json"
 	"github.com/hetiansu5/urlquery"
+	"github.com/obukhov/redis-inventory/src/server"
 	"github.com/obukhov/redis-inventory/src/trie"
-	"io"
-	"io/fs"
-	"io/ioutil"
 	"strings"
 )
 
 // NewChartRendererParams creates ChartRendererParams
 func NewChartRendererParams(paramsSerialized string) (ChartRendererParams, error) {
-	params := ChartRendererParams{Depth: 10}
+	params := ChartRendererParams{Depth: 10, Port: 8888}
 
 	err := urlquery.Unmarshal([]byte(paramsSerialized), &params)
 	if err != nil {
@@ -26,17 +24,20 @@ func NewChartRendererParams(paramsSerialized string) (ChartRendererParams, error
 // ChartRendererParams represents rendering params for web renderer
 type ChartRendererParams struct {
 	Depth int `query:"depth"`
+	Port  int `query:"port"`
 }
 
 // NewChartRenderer creates ChartRenderer
-func NewChartRenderer(output io.Writer, params ChartRendererParams) ChartRenderer {
+func NewChartRenderer(srv server.ServerInterface, params ChartRendererParams) ChartRenderer {
 	return ChartRenderer{
+		server: srv,
 		params: params,
 	}
 }
 
 // ChartRenderer renders trie in the JSON format
 type ChartRenderer struct {
+	server server.ServerInterface
 	params ChartRendererParams
 }
 
@@ -45,47 +46,14 @@ func (o ChartRenderer) Render(root *trie.Node) error {
 	result := o.toNode(root, "Total", "")
 	result.Children = o.convertChildren(root, 0, "")
 
-	s, err := json.Marshal([]Node{result})
-	if err != nil {
+	if rendered, err := o.renderPage(result); err != nil {
 		return err
+	} else {
+		o.server.Serve(o.params.Port, rendered)
+		// wait for input
 	}
 
-	rendered := `<html>
-		<head>
-			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
-			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-sunburst.min.js"></script>
-		</head>
-		<body>
-			<div id="chart"></div>
-			<script type="text/javascript">
-			// create data
-				var data = ` + string(s) + `;
-
-				// create a chart and set the data
-				var chart = anychart.sunburst(data, "as-tree");
-
-				// set the container id
-				chart.container("chart");
-				chart.calculationMode("parent-dependent");
-				chart.labels().position("radial");
-
-				// configure labels
-				chart.labels().format("{%name}");
-
-				// configure tooltips
-				chart.tooltip().useHtml(true);
-				chart.tooltip().format(
-					"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
-				);
-
-				// initiate drawing the chart
-				chart.draw();
-			</script>
-		</body>
-	</html>
-	`
-
-	return ioutil.WriteFile("build/chart.html", []byte(rendered), fs.ModePerm)
+	return nil
 }
 
 func (o ChartRenderer) convertChildren(node *trie.Node, level int, prefix string) []Node {
@@ -137,4 +105,57 @@ type Node struct {
 	FullPath   string `json:"pathFull"`
 	KeysCount  int64  `json:"keys"`
 	Children   []Node `json:"children"`
+}
+
+func (o ChartRenderer) renderPage(result Node) (string, error) {
+	s, err := json.Marshal([]Node{result})
+	if err != nil {
+		return "", err
+	}
+
+	rendered := `<html>
+		<head>
+			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
+			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-sunburst.min.js"></script>
+		</head>
+		<body>
+			<div id="chart"></div>
+			<script type="text/javascript">
+				// create data
+				var data = ` + string(s) + `;
+
+				// create a chart and set the data
+				var chart = anychart.sunburst(data, "as-tree");
+
+				// set the container id
+				chart.container("chart");
+				chart.calculationMode("parent-dependent");
+
+				// configure the visual settings of the chart
+				//chart.palette(anychart.palettes.default);
+				chart.fill(function () {
+				  return this.parent && this.level > 1 ?
+				   anychart.color.lighten(this.parentColor, 0.2) :
+				   this.mainColor;
+				});
+
+				chart.labels().position("radial");
+
+				// configure labels
+				chart.labels().format("{%name}");
+
+				// configure tooltips
+				chart.tooltip().useHtml(true);
+				chart.tooltip().format(
+					"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
+				);
+
+				// initiate drawing the chart
+				chart.draw();
+			</script>
+		</body>
+	</html>
+	`
+
+	return rendered, nil
 }
