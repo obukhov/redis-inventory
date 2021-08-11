@@ -46,12 +46,12 @@ func (o ChartRenderer) Render(root *trie.Node) error {
 	result := o.toNode(root, "Total", "")
 	result.Children = o.convertChildren(root, 0, "")
 
-	if rendered, err := o.renderPage(result); err != nil {
+	rendered, err := o.renderPage(result)
+	if err != nil {
 		return err
-	} else {
-		o.server.Serve(o.params.Port, rendered)
-		// wait for input
 	}
+
+	o.server.Serve(o.params.Port, rendered)
 
 	return nil
 }
