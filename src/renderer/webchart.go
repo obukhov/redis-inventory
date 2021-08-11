@@ -46,12 +46,12 @@ func (o ChartRenderer) Render(root *trie.Node) error {
 	result := o.toNode(root, "Total", "")
 	result.Children = o.convertChildren(root, 0, "")
 
-	if rendered, err := o.renderPage(result); err != nil {
+	rendered, err := o.renderPage(result)
+	if err != nil {
 		return err
-	} else {
-		o.server.Serve(o.params.Port, rendered)
-		// wait for input
 	}
+
+	o.server.Serve(o.params.Port, rendered)
 
 	return nil
 }
@@ -86,6 +86,10 @@ func (o ChartRenderer) convertChildren(node *trie.Node, level int, prefix string
 }
 
 func (o ChartRenderer) toNode(childNode *trie.Node, key string, prefix string) Node {
+	//var value int64 = 0
+	//if len(childNode.Children) == 0 || childNode.OverflowChildrenCount > 0 {
+	//}
+
 	value := childNode.Aggregator().Params[trie.BytesSize]
 	item := Node{
 		Name:       key,
@@ -100,7 +104,7 @@ func (o ChartRenderer) toNode(childNode *trie.Node, key string, prefix string) N
 // Node structure for serialized json of anychart library
 type Node struct {
 	Name       string `json:"name"`
-	Value      int64  `json:"value"`
+	Value      int64  `json:"value,omitempty"`
 	ValueHuman string `json:"valueHuman"`
 	FullPath   string `json:"pathFull"`
 	KeysCount  int64  `json:"keys"`
@@ -108,53 +112,44 @@ type Node struct {
 }
 
 func (o ChartRenderer) renderPage(result Node) (string, error) {
-	s, err := json.Marshal([]Node{result})
+	//s, err := json.MarshalIndent(result, "", "  ")
+	s, err := json.Marshal(result)
 	if err != nil {
 		return "", err
 	}
 
 	rendered := `<html>
 		<head>
+			<script src="//unpkg.com/d3"></script>
 			<script src="//unpkg.com/sunburst-chart"></script>
 		</head>
 		<body>
 			<div id="chart"></div>
 			<script type="text/javascript">
+				const data = ` + string(s) + `;
+ 				const color = d3.scaleOrdinal(d3.schemePaired);
 				const myChart = Sunburst();
 				myChart
-					.data(` + string(s) + `)
-					('chart');
-				//// create data
-				//var data = ;
-				//
-				//// create a chart and set the data
-				//var chart = anychart.sunburst(data, "as-tree");
-				//
-				//// set the container id
-				//chart.container("chart");
-				//chart.calculationMode("parent-dependent");
-				//
-				//// configure the visual settings of the chart
-				////chart.palette(anychart.palettes.default);
-				//chart.fill(function () {
-				//  return this.parent && this.level > 1 ?
-				//   anychart.color.lighten(this.parentColor, 0.2) :
-				//   this.mainColor;
-				//});
-				//
-				//chart.labels().position("radial");
-				//
-				//// configure labels
-				//chart.labels().format("{%name}");
-				//
-				//// configure tooltips
-				//chart.tooltip().useHtml(true);
-				//chart.tooltip().format(
-				//	"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
-				//);
-				//
-				//// initiate drawing the chart
-				//chart.draw();
+					.data(data)
+					.label('name')
+					.size('value')
+					.excludeRoot(false)
+					.centerRadius(0)
+					.radiusScaleExponent(1)
+					.labelOrientation('radial')
+				    .color((d, parent) => {
+						if (parent && parent.depth > 0) {
+							var c = d3.hsl(parent.data.color)
+							c.h += 20
+							d.color = c + ""
+						} else {
+							d.color = color(d.name)
+						}
+
+						return d.color
+					})
+					.tooltipContent((d, node) => ` + "`Size: <i>${d.valueHuman}</i> in ${d.keys} key(s)`" + `)
+					(document.getElementById('chart'));
 			</script>
 		</body>
 	</html>
