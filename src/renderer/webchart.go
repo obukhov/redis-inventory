@@ -115,6 +115,7 @@ func (o ChartRenderer) renderPage(result Node) (string, error) {
 
 	rendered := `<html>
 		<head>
+			<script src="//unpkg.com/d3"></script>
 			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-core.min.js"></script>
 			<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-sunburst.min.js"></script>
 		</head>
@@ -123,7 +124,7 @@ func (o ChartRenderer) renderPage(result Node) (string, error) {
 			<script type="text/javascript">
 				// create data
 				var data = ` + string(s) + `;
-
+				const color = d3.scaleOrdinal(d3.schemePaired)
 				// create a chart and set the data
 				var chart = anychart.sunburst(data, "as-tree");
 
@@ -134,9 +135,14 @@ func (o ChartRenderer) renderPage(result Node) (string, error) {
 				// configure the visual settings of the chart
 				//chart.palette(anychart.palettes.default);
 				chart.fill(function () {
-				  return this.parent && this.level > 1 ?
-				   anychart.color.lighten(this.parentColor, 0.2) :
-				   this.mainColor;
+				    if (this.level > 1) {
+						c = d3.hcl(this.parentColor)
+						c.h += (1.5 * (this.index - this.parent.i + 1))
+						c.s += 5
+						return c.formatHex()
+					} else {
+					 	return color(this.index);
+					}
 				});
 
 				chart.labels().position("radial");
