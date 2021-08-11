@@ -78,10 +78,6 @@ func (o ChartRenderer) convertChildren(node *trie.Node, level int, prefix string
 		result = append(result, item)
 	}
 
-	//if node.OverflowChildrenCount > 0 {
-	//	t.AppendRow(table.Row{o.displayKey(level, fmt.Sprintf("( %d more keys )", node.OverflowChildrenCount), prefix)})
-	//}
-
 	return result
 }
 
