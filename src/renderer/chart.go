@@ -164,7 +164,7 @@ func (o anychartRenderer) render(result Node) (string, error) {
 				// configure tooltips
 				chart.tooltip().useHtml(true);
 				chart.tooltip().format(
-					"<span style='font-weight:bold'>{%pathFull}</span><br>{%valueHuman} in {%keys} keys"
+					"<span style='font-weight:bold'>{%pathFull}</span><br />{%valueHuman} in {%keys} keys"
 				);
 
 				// initiate drawing the chart

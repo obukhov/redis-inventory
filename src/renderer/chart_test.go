@@ -1,9 +1,12 @@
 package renderer
 
 import (
+	"encoding/xml"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"io"
+	"strings"
 	"testing"
 )
 
@@ -84,6 +87,49 @@ func (suite *ChartRendererTestSuite) TestRender() {
 	suite.Assert().Nil(err)
 	srvMock.AssertExpectations(suite.T())
 	rendererMock.AssertExpectations(suite.T())
+}
+
+func (suite *ChartRendererTestSuite) TestAnychartRenderer() {
+	renderer := anychartRenderer{}
+	res, err := renderer.render(Node{
+		Name:       "Total",
+		Value:      6500,
+		ValueHuman: "6.3K",
+		FullPath:   "Total",
+		KeysCount:  9,
+		Children: []Node{
+			{
+				Name:       "dev:",
+				Value:      100,
+				ValueHuman: "100B",
+				FullPath:   "dev:",
+				KeysCount:  7,
+			},
+			{
+				Name:       "prod:",
+				Value:      2500,
+				ValueHuman: "2.4K",
+				FullPath:   "dev:",
+				KeysCount:  15,
+			},
+		},
+	})
+
+	r := strings.NewReader(res)
+	d := xml.NewDecoder(r)
+
+	// Configure the decoder for HTML; leave off strict and autoclose for XHTML
+	d.Strict = true
+	//d.AutoClose = xml.HTMLAutoClose
+	d.Entity = xml.HTMLEntity
+
+	var errParse error
+	for errParse == nil {
+		_, errParse = d.Token()
+	}
+
+	suite.Assert().Equal(io.EOF, errParse, "Invalid html: %s", errParse)
+	suite.Assert().Nil(err)
 }
 
 func (suite *ChartRendererTestSuite) SetupTest() {
