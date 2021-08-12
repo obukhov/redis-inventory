@@ -6,6 +6,7 @@ import (
 	"github.com/hetiansu5/urlquery"
 	"github.com/obukhov/redis-inventory/src/server"
 	"github.com/obukhov/redis-inventory/src/trie"
+	"sort"
 	"strings"
 )
 
@@ -30,15 +31,17 @@ type ChartRendererParams struct {
 // NewChartRenderer creates ChartRenderer
 func NewChartRenderer(srv server.ServerInterface, params ChartRendererParams) ChartRenderer {
 	return ChartRenderer{
-		server: srv,
-		params: params,
+		server:       srv,
+		pageRenderer: anychartRenderer{},
+		params:       params,
 	}
 }
 
 // ChartRenderer renders trie in the JSON format
 type ChartRenderer struct {
-	server server.ServerInterface
-	params ChartRendererParams
+	server       server.ServerInterface
+	pageRenderer pageRenderer
+	params       ChartRendererParams
 }
 
 // Render executes rendering
@@ -46,7 +49,7 @@ func (o ChartRenderer) Render(root *trie.Node) error {
 	result := o.toNode(root, "Total", "")
 	result.Children = o.convertChildren(root, 0, "")
 
-	rendered, err := o.renderPage(result)
+	rendered, err := o.pageRenderer.render(result)
 	if err != nil {
 		return err
 	}
@@ -59,8 +62,14 @@ func (o ChartRenderer) Render(root *trie.Node) error {
 func (o ChartRenderer) convertChildren(node *trie.Node, level int, prefix string) []Node {
 	result := make([]Node, 0)
 
-	for key, childNode := range node.Children {
+	childKeys := make([]string, 0, len(node.Children))
+	for k := range node.Children {
+		childKeys = append(childKeys, k)
+	}
 
+	sort.Strings(childKeys)
+	for _, key := range childKeys {
+		childNode := node.Children[key]
 		nextLevel := level + 1
 		if !childNode.HasAggregator() {
 			var keys []string
@@ -103,7 +112,13 @@ type Node struct {
 	Children   []Node `json:"children"`
 }
 
-func (o ChartRenderer) renderPage(result Node) (string, error) {
+type pageRenderer interface {
+	render(result Node) (string, error)
+}
+
+type anychartRenderer struct{}
+
+func (o anychartRenderer) render(result Node) (string, error) {
 	s, err := json.Marshal([]Node{result})
 	if err != nil {
 		return "", err

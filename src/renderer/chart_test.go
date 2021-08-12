@@ -14,7 +14,61 @@ type ChartRendererTestSuite struct {
 
 func (suite *ChartRendererTestSuite) TestRender() {
 	srvMock := &MockServer{}
-	srvMock.On("Serve", 123, mock.Anything).Once()
+	srvMock.On("Serve", 123, "test page content").Once()
+
+	rendererMock := &mockPageRenderer{}
+	expectedRendererResult := Node{
+		Name:       "Total",
+		Value:      6500,
+		ValueHuman: "6.3K",
+		FullPath:   "Total",
+		KeysCount:  9,
+		Children: []Node{
+			{
+				Name:       "dev:",
+				Value:      2500,
+				ValueHuman: "2.4K",
+				FullPath:   "dev:",
+				KeysCount:  7,
+				Children: []Node{
+					{
+						Name:       "article:",
+						Value:      500,
+						ValueHuman: "500B",
+						FullPath:   "dev:article:",
+						KeysCount:  5,
+						Children: []Node{
+							{Name: "1", Value: 100, ValueHuman: "100B", FullPath: "dev:article:1", KeysCount: 1},
+							{Name: "2", Value: 100, ValueHuman: "100B", FullPath: "dev:article:2", KeysCount: 1},
+							{Name: "3", Value: 100, ValueHuman: "100B", FullPath: "dev:article:3", KeysCount: 1},
+						},
+					}, {
+						Name:       "user:",
+						Value:      2000,
+						ValueHuman: "2K",
+						FullPath:   "dev:user:",
+						KeysCount:  2,
+						Children: []Node{
+							{Name: "bar", Value: 1000, ValueHuman: "1000B", FullPath: "dev:user:bar", KeysCount: 1},
+							{Name: "foo", Value: 1000, ValueHuman: "1000B", FullPath: "dev:user:foo", KeysCount: 1},
+						},
+					},
+				},
+			},
+			{
+				Name:       "prod:user:",
+				Value:      4000,
+				ValueHuman: "3.9K",
+				FullPath:   "prod:user:",
+				KeysCount:  2,
+				Children: []Node{
+					{Name: "bar", Value: 2000, ValueHuman: "2K", FullPath: "prod:user:bar", KeysCount: 1},
+					{Name: "foo", Value: 2000, ValueHuman: "2K", FullPath: "prod:user:foo", KeysCount: 1},
+				},
+			},
+		},
+	}
+	rendererMock.On("render", expectedRendererResult).Once().Return("test page content", nil)
 
 	renderer := NewChartRenderer(
 		srvMock,
@@ -23,11 +77,13 @@ func (suite *ChartRendererTestSuite) TestRender() {
 			Port:  123,
 		},
 	)
+	renderer.pageRenderer = rendererMock
 
 	err := renderer.Render(suite.trie.Root())
 
 	suite.Assert().Nil(err)
 	srvMock.AssertExpectations(suite.T())
+	rendererMock.AssertExpectations(suite.T())
 }
 
 func (suite *ChartRendererTestSuite) SetupTest() {
@@ -58,4 +114,14 @@ type MockServer struct {
 
 func (m *MockServer) Serve(port int, content string) {
 	m.Called(port, content)
+}
+
+type mockPageRenderer struct {
+	mock.Mock
+}
+
+func (m *mockPageRenderer) render(result Node) (string, error) {
+	args := m.Called(result)
+
+	return args.String(0), args.Error(1)
 }
