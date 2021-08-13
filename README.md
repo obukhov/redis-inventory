@@ -44,7 +44,7 @@ Outputs it as a nice table
 
 It also can render sunburst diagrams to visualize it:
 
-[![Full sunburst diagram](docs/images/full-diagram1000.png)](docs/images/full-diagram.png)
+[![Full sunburst diagram](docs/images/diagram1000.png)](docs/images/diagram.png)
 
 Read more about [usage](docs/usage.md)
 
