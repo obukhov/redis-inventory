@@ -26,6 +26,11 @@ func (suite *RendererTestSuite) TestNewRender() {
 			"",
 			JSONRenderer{},
 		},
+		{
+			"chart",
+			"",
+			ChartRenderer{},
+		},
 	} {
 		suite.Run(t.outputParams, func() {
 			renderer, err := NewRenderer(t.output, t.outputParams, zerolog.Nop())
@@ -48,6 +53,10 @@ func (suite *RendererTestSuite) TestNewRenderWithError() {
 		{
 			"json",
 			"padSpaces=asd",
+		},
+		{
+			"chart",
+			"port=-1",
 		},
 	} {
 		suite.Run(t.outputParams, func() {

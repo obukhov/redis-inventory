@@ -3,6 +3,7 @@ package renderer
 import (
 	"code.cloudfoundry.org/bytefmt"
 	"encoding/json"
+	"errors"
 	"github.com/hetiansu5/urlquery"
 	"github.com/obukhov/redis-inventory/src/server"
 	"github.com/obukhov/redis-inventory/src/trie"
@@ -17,6 +18,10 @@ func NewChartRendererParams(paramsSerialized string) (ChartRendererParams, error
 	err := urlquery.Unmarshal([]byte(paramsSerialized), &params)
 	if err != nil {
 		return params, err
+	}
+
+	if params.Port <= 0 {
+		return params, errors.New("port cannot be negative")
 	}
 
 	return params, nil
