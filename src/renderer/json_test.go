@@ -32,7 +32,7 @@ func (suite *JSONRendererTestSuite) TestRenderWithIndent() {
 	params, err := NewJSONRendererParams("padSpaces=2")
 	suite.Assert().Nil(err)
 
-	r := JSONRenderer{&buf, params}
+	r := NewJSONRenderer(&buf, params)
 
 	err = r.Render(suite.trie.Root())
 	suite.Assert().Nil(err, "Error rendering trie")
