@@ -141,6 +141,8 @@ func (o anychartRenderer) render(result Node) (string, error) {
 				// create data
 				var data = ` + string(s) + `;
 				const color = d3.scaleOrdinal(d3.schemePaired)
+				// Free license provided for the project
+				anychart.licenseKey("redis-inventory-80818dc5-535fabc6");
 				// create a chart and set the data
 				var chart = anychart.sunburst(data, "as-tree");
 
