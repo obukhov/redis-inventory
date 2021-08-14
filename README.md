@@ -54,10 +54,10 @@ Read more about [usage](docs/usage.md)
 
 ## Installation
 
-There are several ways to install this tools:
+There are two ways to install the tool:
 
-- using docker
-- building from sources
+- use docker image
+- build binary from sources
 
 ### Using docker
 

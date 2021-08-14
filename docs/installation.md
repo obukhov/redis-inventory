@@ -1,8 +1,8 @@
 ## Installation
 
-There are several ways to install this tools:
+There are two ways to install the tool:
 
-- using docker
+- use docker image
 - building from sources
 
 ### Using docker
@@ -10,19 +10,18 @@ There are several ways to install this tools:
 To run the tool from a docker image, run the command:
 
 ```bash
-docker run --rm dclg/redis-inventory inventory <HOST>:<PORT>
+docker run --rm -v "$PWD:/tmp" -p 8888:8888 dclg/redis-inventory inventory <HOST>:<PORT>
 ```
 
-If you plan to run sequence of `index` and `display` so want to utilize file cache, add volume mount to local dir.
+Mounting temp dir (`-v $PWD:/tmp`) makes it possible to run sequence of `index` and `display` while keeping the state
+between runs.
+
+Exposing a port (`-p 8888:8888`) is needed for `chart` output type.
+
+If you are using the tool regularly, create an alias:
 
 ```bash
-docker run --rm -v "$PWD:/tmp" dclg/redis-inventory index <HOST>:<PORT>
-```
-
-If you use the tool regularly, create an alias:
-
-```bash
-alias ri="docker run --rm -v "$PWD:/tmp" dclg/redis-inventory"
+alias ri="docker run --rm -v \"$PWD:/tmp\" -p 8888:8888  dclg/redis-inventory"
 ```
 
 So you can run it just like so:
@@ -77,14 +76,14 @@ You have to have [golang installed](https://golang.org/doc/install) on your comp
 git clone git@github.com:obukhov/redis-inventory.git
 ```
 
-2. Build a binary:
+2. Build the binary:
 
 ```bash
 cd redis-inventory
 go build -o redis-inventory main.go
 ```
 
-3. Run it or move it one of your PATH directories:
+3. Run it or move it to one of your PATH directories:
 
 ```bash
 mv redis-inventory /usr/local/bin/
