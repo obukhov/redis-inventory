@@ -24,7 +24,7 @@ func (suite *RedisServiceTestSuite) createRedis() (RedisService, *miniredis.Mini
 	m.Set("dev:key1", "bar")
 	m.Set("dev:key2", "foobar")
 
-	client, err := (radix.PoolConfig{}).New(context.Background(), "tcp", m.Addr())
+	client, _ := (radix.PoolConfig{}).New(context.Background(), "tcp", m.Addr())
 
 	service := NewRedisService(client)
 
