@@ -12,7 +12,7 @@ inspired by "Disk Inventory X" tool doing similar analysis for disk usage.
 Example:
 
 ```bash
-$ redis-inventory inventory <host>:<port> --output=table --output-params="padSpaces=2&depth=2&human=1"                                                                                                                                                                                       643ms  Do 22 Jul 2021 22:01:41 UTC
+$ redis-inventory inventory <host>:<port> --output=table --output-params="padSpaces=2&depth=2&human=1"
 ```
 
 Outputs it as a nice table
@@ -42,14 +42,22 @@ Outputs it as a nice table
 12:39PM INF Finish scanning
 ```
 
+It also can render sunburst diagrams to visualize it:
+```bash
+$ redis-inventory inventory <host>:<port> --output=chart --maxChildren=100
+```
+
+
+[![Full sunburst diagram](docs/images/diagram1000.png)](docs/images/diagram.png)
+
 Read more about [usage](docs/usage.md)
 
 ## Installation
 
-There are several ways to install this tools:
+There are two ways to install the tool:
 
-- using docker
-- building from sources
+- use docker image
+- build binary from sources
 
 ### Using docker
 

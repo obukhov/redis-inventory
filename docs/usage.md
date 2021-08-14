@@ -44,6 +44,13 @@ If padding is not specified in either way, nested keys are displayed with full p
 
 If padding is not specified in either way json is not pretty-printed.
 
+### Chart
+
+| Option name  | Description                                     | Default   |
+|--------------|-------------------------------------------------|-----------|
+| depth        | Maximum nesting level for keys before grouping  | `10`      |
+| port         | Use custom character to pad nested level        | `8888`    |
+
 ## Using cached index
 
 You can scan redis instance once and then use different visualisations. For scanning use `index` command. To display

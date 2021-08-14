@@ -2,7 +2,9 @@ package renderer
 
 import (
 	"errors"
+	"github.com/obukhov/redis-inventory/src/server"
 	"github.com/obukhov/redis-inventory/src/trie"
+	"github.com/rs/zerolog"
 	"os"
 )
 
@@ -13,7 +15,7 @@ type Renderer interface {
 }
 
 // NewRenderer creates Renderer implementation by type and set of params
-func NewRenderer(output, paramsString string) (Renderer, error) {
+func NewRenderer(output, paramsString string, logger zerolog.Logger) (Renderer, error) {
 	switch output {
 	case "table":
 		params, err := NewTableRendererParams(paramsString)
@@ -29,6 +31,14 @@ func NewRenderer(output, paramsString string) (Renderer, error) {
 		}
 
 		return JSONRenderer{os.Stdout, params}, nil
+
+	case "chart":
+		params, err := NewChartRendererParams(paramsString)
+		if err != nil {
+			return nil, err
+		}
+
+		return NewChartRenderer(server.NewServer(logger), params), nil
 	default:
 		return nil, errors.New("unknown render type")
 	}
