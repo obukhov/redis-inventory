@@ -8,22 +8,26 @@ import (
 	"os"
 )
 
-type ServerInterface interface {
+// SimpleServerInterface abstraction for simplified web server
+type SimpleServerInterface interface {
 	Serve(port int, content string)
 }
 
-func NewServer(logger zerolog.Logger) *Server {
-	return &Server{
+// NewServer creates SimpleServer
+func NewServer(logger zerolog.Logger) *SimpleServer {
+	return &SimpleServer{
 		logger: logger,
 	}
 }
 
-type Server struct {
+// SimpleServer is SimpleServerInterface implementation
+type SimpleServer struct {
 	content string
 	logger  zerolog.Logger
 }
 
-func (s *Server) Serve(port int, content string) {
+// Serve initiates server, block for input on stdin
+func (s *SimpleServer) Serve(port int, content string) {
 	s.content = content
 	go func() {
 		s.logger.Info().Msgf("Listening on port %d: http://localhost:%d/", port, port)
@@ -36,7 +40,8 @@ func (s *Server) Serve(port int, content string) {
 	input.Scan()
 }
 
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// ServeHTTP handler function
+func (s *SimpleServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	countBytes, err := w.Write([]byte(s.content))
 	if err != nil {
 		s.logger.Fatal().Err(err).Msg("Error handling request")

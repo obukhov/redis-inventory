@@ -34,7 +34,7 @@ type ChartRendererParams struct {
 }
 
 // NewChartRenderer creates ChartRenderer
-func NewChartRenderer(srv server.ServerInterface, params ChartRendererParams) ChartRenderer {
+func NewChartRenderer(srv server.SimpleServerInterface, params ChartRendererParams) ChartRenderer {
 	return ChartRenderer{
 		server:       srv,
 		pageRenderer: anychartRenderer{},
@@ -44,7 +44,7 @@ func NewChartRenderer(srv server.ServerInterface, params ChartRendererParams) Ch
 
 // ChartRenderer renders trie in the JSON format
 type ChartRenderer struct {
-	server       server.ServerInterface
+	server       server.SimpleServerInterface
 	pageRenderer pageRenderer
 	params       ChartRendererParams
 }
