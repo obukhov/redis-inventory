@@ -72,4 +72,4 @@ automatically be merged with it.
 
 - [index command](cobra/redis-inventory_index.md)
 - [display command](cobra/redis-inventory_display.md)
-- [inventoory command](cobra/redis-inventory_inventory.md)
+- [inventory command](cobra/redis-inventory_inventory.md)
