@@ -9,6 +9,8 @@ Redis Inventory
 Redis inventory is a tool to analyse Redis memory usage by key patterns and displaying it hierarchically. The name is
 inspired by "Disk Inventory X" tool doing similar analysis for disk usage.
 
+Blog post on how it works: [Medium](https://medium.com/geekculture/analyzing-memory-usage-in-redis-by-key-patterns-e36420a2c225) | [My blog](https://dclg.net/posts/2021-08-16---Redis-inventory/redis-inventory)
+
 Example:
 
 ```bash
