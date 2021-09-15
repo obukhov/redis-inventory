@@ -8,6 +8,8 @@ updates:
     reviewers: ["obukhov"]
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 2
+
   - package-ecosystem: "gomod"
     directory: "/"
     pull-request-branch-name:
@@ -15,3 +17,4 @@ updates:
     reviewers:  ["obukhov"]
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 5

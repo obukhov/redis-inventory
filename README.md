@@ -68,7 +68,7 @@ There are two ways to install the tool:
 To run the tool from a docker image, run the command:
 
 ```bash
-docker run --rm dclg/redis-inventory inventory <HOST>:<PORT>
+docker run --rm dclg/redis-inventory inventory <redis-url>
 ```
 
 Read more about [installation](docs/installation.md)
