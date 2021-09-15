@@ -2,5 +2,11 @@ version: '3.7'
 services:
   redis:
     image: redis:6.2-alpine
+    command: redis-server
     ports:
       - "${REDIS_PORT:-63795}:6379"
+  redis-auth:
+    image: redis:6.2-alpine
+    command: redis-server --requirepass 12345
+    ports:
+      - "${REDIS_PORT:-63796}:6379"

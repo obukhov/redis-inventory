@@ -14,8 +14,14 @@ Blog post on how it works: [Medium](https://medium.com/geekculture/analyzing-mem
 Example:
 
 ```bash
-$ redis-inventory inventory <host>:<port> --output=table --output-params="padSpaces=2&depth=2&human=1"
+$ redis-inventory inventory <redis-url> --output=table --output-params="padSpaces=2&depth=2&human=1"
 ```
+
+`<redis-url>` can be provided in one of two formats ([see examples](docs/redis-url.md)):
+
+- `<host>:<port>` - simplified format,
+- `redis://[:<password>@]<host>:<port>[/<dbIndex>]` - in case if you want to specify password or DB Index for the connection.
+
 
 Outputs it as a nice table
 
@@ -46,7 +52,7 @@ Outputs it as a nice table
 
 It also can render sunburst diagrams to visualize it:
 ```bash
-$ redis-inventory inventory <host>:<port> --output=chart --maxChildren=100
+$ redis-inventory inventory <redis-url> --output=chart --maxChildren=100
 ```
 
 

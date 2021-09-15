@@ -10,7 +10,7 @@ There are two ways to install the tool:
 To run the tool from a docker image, run the command:
 
 ```bash
-docker run --rm -v "$PWD:/tmp" -p 8888:8888 dclg/redis-inventory inventory <HOST>:<PORT>
+docker run --rm -v "$PWD:/tmp" -p 8888:8888 dclg/redis-inventory inventory <redis-url>
 ```
 
 Mounting temp dir (`-v $PWD:/tmp`) makes it possible to run sequence of `index` and `display` while keeping the state

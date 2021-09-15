@@ -14,7 +14,7 @@ import (
 )
 
 var scanCmd = &cobra.Command{
-	Use:   "inventory [sourceHost:port]",
+	Use:   "inventory redis://[:<password>@]<host>:<port>[/<dbIndex>]",
 	Short: "Scan keys and display summary right away with selected output and output params",
 	Long:  "Scan command builds prefix tree in memory and then displays the usage summary. To avoid scanning redis instance when trying different output formats use `index` and `display` commands",
 	Args:  cobra.MinimumNArgs(1),

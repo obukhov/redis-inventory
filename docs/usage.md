@@ -4,8 +4,10 @@ Usage
 ## General interface
 
 ```bash
-redis-inventory inventory <host>:<port> [--output=<output type>] [--output-params=<querstring serialized params>]
+redis-inventory inventory <redis-url> [--output=<output type>] [--output-params=<querstring serialized params>]
 ```
+
+`<redis-url>` can be provided in [one of two formats](docs/redis-url.md)
 
 ## Output type
 
@@ -62,8 +64,10 @@ It is quite common to use ":" as a level separator in redis. Sometimes, though, 
 example "_" or "-") to also be a level separator. Redis-inventory can use custom characters for splitting keys:
 
 ```bash
-redis-inventory inventory <host>:<port> --separators=":_-"
+redis-inventory inventory <redis-url> --separators=":_-"
 ```
+
+`<redis-url>` can be provided in [one of two formats](docs/redis-url.md)
 
 It will work even if those characters sometimes are used not for level separation, as a node with just one child will
 automatically be merged with it.

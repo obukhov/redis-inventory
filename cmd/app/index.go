@@ -13,7 +13,7 @@ import (
 )
 
 var indexCmd = &cobra.Command{
-	Use:   "index [sourceHost:port]",
+	Use:   "index redis://[:<password>@]<host>:<port>[/<dbIndex>]",
 	Short: "Scan keys and save prefix tree in a temporary file for further rendering with display command",
 	Long:  "Keep in mind that some options are scanning (index) options that cannot be redefined later. For example, `maxChildren` changes the way index data is built, unlike `depth` parameter only influencing rendering",
 	Args:  cobra.MinimumNArgs(1),
