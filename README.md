@@ -17,11 +17,7 @@ Example:
 $ redis-inventory inventory <redis-url> --output=table --output-params="padSpaces=2&depth=2&human=1"
 ```
 
-`<redis-url>` can be provided in one of two formats ([see examples](docs/redis-url.md)):
-
-- `<host>:<port>` - simplified format,
-- `redis://[:<password>@]<host>:<port>[/<dbIndex>]` - in case if you want to specify password or DB Index for the connection.
-
+`<redis-url>` can be provided in [one of two formats](docs/redis-url.md)
 
 Outputs it as a nice table
 
@@ -76,3 +72,10 @@ docker run --rm dclg/redis-inventory inventory <HOST>:<PORT>
 ```
 
 Read more about [installation](docs/installation.md)
+
+### Kudos
+
+- [Radix](https://github.com/mediocregopher/radix) — Redis client for Go,
+- [Cobra](https://github.com/spf13/cobra) — CLI applications framework,
+- [Go-Pretty](https://github.com/jedib0t/go-pretty) — tools to render tables and progress bars,
+- [AnyChart](https://www.anychart.com/) — beautiful sunburst diagrams.
