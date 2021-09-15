@@ -1,0 +1,17 @@
+# https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/"
+    pull-request-branch-name:
+      separator: "-"
+    reviewers: ["obukhov"]
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gomod"
+    directory: "/"
+    pull-request-branch-name:
+      separator: "-"
+    reviewers:  ["obukhov"]
+    schedule:
+      interval: "daily"
