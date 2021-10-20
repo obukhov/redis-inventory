@@ -251,8 +251,8 @@ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Ky
 github.com/mattn/go-runewidth v0.0.9 h1:Lm995f3rfxdpd6TSmuVCHVb/QhupuXlYr8sCI/QdE+0=
 github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
-github.com/mediocregopher/radix/v4 v4.0.0-beta.1 h1:RDgQ4wCQ6f+pUsX20CIzjNJnI5P9KDw4j1sjOVHxo7Y=
-github.com/mediocregopher/radix/v4 v4.0.0-beta.1/go.mod h1:Z74pilm773ghbGV4EEoPvi6XWgkAfr0VCNkfa8gI1PU=
+github.com/mediocregopher/radix/v4 v4.0.0 h1:BUj/kzvuppH81PTHoxQqmQhu8JpHDWRFST6JQQE0hBQ=
+github.com/mediocregopher/radix/v4 v4.0.0/go.mod h1:ajchozX/6ELmydxWeWM6xCFHVpZ4+67LXHOTOVR0nCE=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.26/go.mod h1:bPDLeHnStXmXAq1m/Ch/hvfNHr14JKNPMBo3VZKjuso=
 github.com/mitchellh/cli v1.1.0/go.mod h1:xcISNoH86gajksDmfB23e/pu+B+GeFRMYmoHXxx3xhI=
