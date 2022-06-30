@@ -59,12 +59,12 @@ var indexCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(indexCmd)
-	indexCmd.Flags().BoolVar(&isTLS, "tls", false, "use TLS connection")
 	indexCmd.Flags().StringVarP(&indexFileName, "indexFile", "i", "./redis-inventory.json", "Name of the file where the data is saved")
 	indexCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")
-	indexCmd.Flags().StringVarP(&separators, "separators", "s", ":", "Symbols that logically separate levels of the key")
 	indexCmd.Flags().IntVarP(&maxChildren, "maxChildren", "m", 10, "Maximum children node can have before start aggregating")
 	indexCmd.Flags().StringVarP(&pattern, "pattern", "k", "*", "Glob pattern limiting the keys to be aggregated")
 	indexCmd.Flags().IntVarP(&scanCount, "scanCount", "c", 1000, "Number of keys to be scanned in one iteration (argument of scan command)")
+	indexCmd.Flags().StringVarP(&separators, "separators", "s", ":", "Symbols that logically separate levels of the key")
 	indexCmd.Flags().IntVarP(&throttleNs, "throttle", "t", 0, "Throttle: number of nanoseconds to sleep between keys")
+	indexCmd.Flags().BoolVar(&isTLS, "tls", false, "Use TLS connection")
 }

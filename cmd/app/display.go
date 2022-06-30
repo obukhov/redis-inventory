@@ -48,7 +48,7 @@ var displayCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(displayCmd)
 	displayCmd.Flags().StringVarP(&indexFileName, "indexFile", "i", "./redis-inventory.json", "Name of the file where the data is saved")
+	displayCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")
 	displayCmd.Flags().StringVarP(&output, "output", "o", "table", "One of possible outputs: json, jsonp, table")
 	displayCmd.Flags().StringVarP(&outputParams, "output-params", "p", "", "Parameters specific for output type")
-	displayCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")
 }
