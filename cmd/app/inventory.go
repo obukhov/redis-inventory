@@ -1,10 +1,8 @@
 package app
 
 import (
-	"context"
 	"os"
 
-	"github.com/mediocregopher/radix/v4"
 	"github.com/obukhov/redis-inventory/src/adapter"
 	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/renderer"
@@ -22,7 +20,7 @@ var scanCmd = &cobra.Command{
 		consoleLogger := logger.NewConsoleLogger(logLevel)
 		consoleLogger.Info().Msg("Start scanning")
 
-		clientSource, err := (radix.PoolConfig{}).New(context.Background(), "tcp", args[0])
+		clientSource, err := newPool(args[0])
 		if err != nil {
 			consoleLogger.Fatal().Err(err).Msg("Can't create redis client")
 		}
@@ -59,6 +57,7 @@ var scanCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(scanCmd)
+	scanCmd.Flags().BoolVar(&isTLS, "tls", false, "use TLS connection")
 	scanCmd.Flags().StringVarP(&output, "output", "o", "table", "One of possible outputs: json, jsonp, table")
 	scanCmd.Flags().StringVarP(&outputParams, "output-params", "p", "", "Parameters specific for output type")
 	scanCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")

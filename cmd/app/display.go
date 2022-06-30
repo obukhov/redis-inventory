@@ -2,11 +2,12 @@ package app
 
 import (
 	"encoding/json"
+	"os"
+
 	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/renderer"
 	"github.com/obukhov/redis-inventory/src/trie"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var displayCmd = &cobra.Command{
@@ -18,7 +19,6 @@ var displayCmd = &cobra.Command{
 		consoleLogger := logger.NewConsoleLogger(logLevel)
 		consoleLogger.Info().Msg("Loading index")
 
-		indexFileName := os.TempDir() + "/redis-inventory.json"
 		f, err := os.Open(indexFileName)
 		if err != nil {
 			consoleLogger.Fatal().Err(err).Msg("Can't create renderer")
@@ -47,6 +47,7 @@ var displayCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(displayCmd)
+	displayCmd.Flags().StringVarP(&indexFileName, "indexFile", "i", "./redis-inventory.json", "Name of the file where the data is saved")
 	displayCmd.Flags().StringVarP(&output, "output", "o", "table", "One of possible outputs: json, jsonp, table")
 	displayCmd.Flags().StringVarP(&outputParams, "output-params", "p", "", "Parameters specific for output type")
 	displayCmd.Flags().StringVarP(&logLevel, "logLevel", "l", "info", "Level of logs to be displayed")
