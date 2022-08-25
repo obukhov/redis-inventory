@@ -1,5 +1,7 @@
 package trie
 
+import "sync"
+
 // NewNode creates Node
 func NewNode() *Node {
 	return &Node{
@@ -10,6 +12,7 @@ func NewNode() *Node {
 
 // Node node of the trie
 type Node struct {
+	childrenLock          sync.RWMutex
 	Children              map[string]*Node `json:"Children,omitempty"`
 	Aggr                  *Aggregator      `json:"Values,omitempty"`
 	OverflowChildrenCount uint64           `json:"Overflow,omitempty"`
@@ -22,6 +25,9 @@ func (n *Node) HasAggregator() bool {
 
 // GetChild returns a child node by provided key, if key doesn't exist returns nil
 func (n *Node) GetChild(key string) *Node {
+	n.childrenLock.RLock()
+	defer n.childrenLock.RUnlock()
+
 	return n.Children[key]
 }
 
@@ -32,6 +38,9 @@ func (n *Node) Aggregator() *Aggregator {
 
 // HasChildren returns if the node has at least one child node
 func (n *Node) HasChildren() bool {
+	n.childrenLock.RLock()
+	defer n.childrenLock.RUnlock()
+
 	return len(n.Children) > 0
 }
 
@@ -42,16 +51,25 @@ func (n *Node) AddAggregator(aggr *Aggregator) {
 
 // AddChild add child nodes on provided key
 func (n *Node) AddChild(key string, node *Node) {
+	n.childrenLock.Lock()
+	defer n.childrenLock.Unlock()
+
 	n.Children[key] = node
 }
 
 // ChildCount return number of child nodes
 func (n *Node) ChildCount() int {
+	n.childrenLock.RLock()
+	defer n.childrenLock.RUnlock()
+
 	return len(n.Children)
 }
 
 // FirstChild returns child node, panics if there are no child nodes
 func (n *Node) FirstChild() *Node {
+	n.childrenLock.RLock()
+	defer n.childrenLock.RUnlock()
+
 	for _, child := range n.Children {
 		return child
 	}
@@ -61,6 +79,9 @@ func (n *Node) FirstChild() *Node {
 
 // FirstChildWithKey return child node and its key, panics if there are no child nodes
 func (n *Node) FirstChildWithKey() (string, *Node) {
+	n.childrenLock.RLock()
+	defer n.childrenLock.RUnlock()
+
 	for key, child := range n.Children {
 		return key, child
 	}
