@@ -2,7 +2,6 @@ package scanner
 
 import (
 	"context"
-	"fmt"
 	"runtime"
 	"sync"
 
@@ -47,7 +46,6 @@ func (s *RedisScanner) Scan(options adapter.ScanOptions, result *trie.Trie) {
 	var wg sync.WaitGroup
 	wg.Add(cpus)
 
-	fmt.Printf("batching start\n")
 	keys := s.redisService.ScanKeys(context.Background(), options)
 	for i := 0; i < cpus; i++ {
 		go func(batch int) {
@@ -73,7 +71,6 @@ func (s *RedisScanner) Scan(options adapter.ScanOptions, result *trie.Trie) {
 	}
 
 	wg.Wait()
-	fmt.Printf("batching end\n")
 	s.scanProgress.Stop()
 }
 
