@@ -2,6 +2,8 @@ package scanner
 
 import (
 	"context"
+	"runtime"
+	"sync"
 
 	"github.com/obukhov/redis-inventory/src/adapter"
 	"github.com/obukhov/redis-inventory/src/trie"
@@ -39,22 +41,36 @@ func (s *RedisScanner) Scan(options adapter.ScanOptions, result *trie.Trie) {
 	}
 
 	s.scanProgress.Start(totalCount)
-	for key := range s.redisService.ScanKeys(context.Background(), options) {
-		s.scanProgress.Increment()
-		res, err := s.redisService.GetMemoryUsage(context.Background(), key)
-		if err != nil {
-			s.logger.Error().Err(err).Msgf("Error dumping key %s", key)
-			continue
-		}
 
-		result.Add(
-			key,
-			trie.ParamValue{Param: trie.BytesSize, Value: res},
-			trie.ParamValue{Param: trie.KeysCount, Value: 1},
-		)
+	cpus := runtime.NumCPU()
+	var wg sync.WaitGroup
+	wg.Add(cpus)
 
-		s.logger.Debug().Msgf("Dump %s value: %d", key, res)
+	keys := s.redisService.ScanKeys(context.Background(), options)
+	for i := 0; i < cpus; i++ {
+		go func(batch int) {
+			defer wg.Done()
+
+			for key := range keys {
+				s.scanProgress.Increment()
+				res, err := s.redisService.GetMemoryUsage(context.Background(), key)
+				if err != nil {
+					s.logger.Error().Err(err).Msgf("Error dumping key %s", key)
+					return
+				}
+
+				result.Add(
+					key,
+					trie.ParamValue{Param: trie.BytesSize, Value: res},
+					trie.ParamValue{Param: trie.KeysCount, Value: 1},
+				)
+
+				s.logger.Debug().Msgf("Dump %s value: %d", key, res)
+			}
+		}(i)
 	}
+
+	wg.Wait()
 	s.scanProgress.Stop()
 }
 
