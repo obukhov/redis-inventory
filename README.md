@@ -3,7 +3,7 @@ Redis Inventory
 
 [![Build Status](https://travis-ci.com/obukhov/redis-inventory.svg?branch=master)](https://travis-ci.com/obukhov/redis-inventory)
 [![Coverage Status](https://coveralls.io/repos/github/obukhov/redis-inventory/badge.svg?branch=master)](https://coveralls.io/github/obukhov/redis-inventory?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/obukhov/redis-inventory)](https://goreportcard.com/report/github.com/obukhov/redis-inventory)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Perseus/redis-inventory)](https://goreportcard.com/report/github.com/Perseus/redis-inventory)
 [![Docker Pulls](https://img.shields.io/docker/pulls/dclg/redis-inventory)](https://hub.docker.com/repository/docker/dclg/redis-inventory)
 
 Redis inventory is a tool to analyse Redis memory usage by key patterns and displaying it hierarchically. The name is

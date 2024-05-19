@@ -2,7 +2,7 @@ package renderer
 
 import (
 	"encoding/xml"
-	"github.com/obukhov/redis-inventory/src/trie"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"io"

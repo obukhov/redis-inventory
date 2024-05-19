@@ -2,8 +2,8 @@ package renderer
 
 import (
 	"encoding/json"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/hetiansu5/urlquery"
-	"github.com/obukhov/redis-inventory/src/trie"
 	"io"
 	"strings"
 )

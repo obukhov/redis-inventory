@@ -2,8 +2,8 @@ package renderer
 
 import (
 	"errors"
-	"github.com/obukhov/redis-inventory/src/server"
-	"github.com/obukhov/redis-inventory/src/trie"
+	"github.com/Perseus/redis-inventory/src/server"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
 	"os"
 )

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/obukhov/redis-inventory/cmd/app"
+	"github.com/Perseus/redis-inventory/cmd/app"
 	"github.com/spf13/cobra/doc"
 	"log"
 )

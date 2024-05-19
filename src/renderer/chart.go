@@ -4,9 +4,9 @@ import (
 	"code.cloudfoundry.org/bytefmt"
 	"encoding/json"
 	"errors"
+	"github.com/Perseus/redis-inventory/src/server"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/hetiansu5/urlquery"
-	"github.com/obukhov/redis-inventory/src/server"
-	"github.com/obukhov/redis-inventory/src/trie"
 	"sort"
 	"strings"
 )

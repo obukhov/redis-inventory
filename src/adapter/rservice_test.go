@@ -2,10 +2,12 @@ package adapter
 
 import (
 	"context"
-	"github.com/alicebob/miniredis/v2"
-	"github.com/mediocregopher/radix/v4"
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/Perseus/redis-inventory/src/logger"
+	"github.com/alicebob/miniredis/v2"
+	"github.com/redis/go-redis/v9"
+	"github.com/stretchr/testify/suite"
 )
 
 type RedisServiceTestSuite struct {
@@ -24,9 +26,10 @@ func (suite *RedisServiceTestSuite) createRedis() (RedisService, *miniredis.Mini
 	m.Set("dev:key1", "bar")
 	m.Set("dev:key2", "foobar")
 
-	client, _ := (radix.PoolConfig{}).New(context.Background(), "tcp", m.Addr())
-
-	service := NewRedisService(client)
+	client := redis.NewClient(&redis.Options{Addr: m.Addr()})
+	logger := logger.NewConsoleLogger("trace")
+	service := NewRedisService(logger)
+	service.SetClient(*client)
 
 	return service, m
 }
@@ -44,14 +47,14 @@ func (suite *RedisServiceTestSuite) TestCountKeys() {
 
 func (suite *RedisServiceTestSuite) TestScan() {
 	service, m := suite.createRedis()
+	scanUpdateChan := make(chan ShardScanUpdate)
+	service.ScanKeys(context.Background(), ScanOptions{ScanCount: 1000}, scanUpdateChan)
 
-	res := service.ScanKeys(context.Background(), ScanOptions{ScanCount: 1000})
+	key1 := <-scanUpdateChan
+	key2 := <-scanUpdateChan
 
-	key1 := <-res
-	key2 := <-res
-
-	suite.Assert().Equal("dev:key1", key1)
-	suite.Assert().Equal("dev:key2", key2)
+	suite.Assert().Equal("dev:key1", key1.Key)
+	suite.Assert().Equal("dev:key2", key2.Key)
 
 	m.Close()
 }
@@ -59,13 +62,13 @@ func (suite *RedisServiceTestSuite) TestScan() {
 func (suite *RedisServiceTestSuite) TestScanMatch() {
 	service, m := suite.createRedis()
 
-	res := service.ScanKeys(context.Background(), ScanOptions{ScanCount: 1000, Pattern: "*:key1"})
+	scanUpdateChan := make(chan ShardScanUpdate)
+	service.ScanKeys(context.Background(), ScanOptions{Pattern: "*:key1", ScanCount: 1000}, scanUpdateChan)
 
-	key1 := <-res
-	suite.Assert().Equal("dev:key1", key1)
+	key1 := <-scanUpdateChan
+	suite.Assert().Equal("dev:key1", key1.Key)
 
 	m.Close()
-
 }
 
 func TestRedisServiceTestSuite(t *testing.T) {

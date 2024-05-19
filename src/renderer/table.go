@@ -3,10 +3,10 @@ package renderer
 import (
 	"code.cloudfoundry.org/bytefmt"
 	"fmt"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/hetiansu5/urlquery"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
-	"github.com/obukhov/redis-inventory/src/trie"
 	"golang.org/x/text/message"
 	"io"
 	"sort"

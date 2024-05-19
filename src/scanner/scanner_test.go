@@ -3,10 +3,11 @@ package scanner
 import (
 	"context"
 	"errors"
-	"github.com/obukhov/redis-inventory/src/adapter"
 	"testing"
 
-	"github.com/obukhov/redis-inventory/src/trie"
+	"github.com/Perseus/redis-inventory/src/adapter"
+
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -20,9 +21,13 @@ type RedisServiceMock struct {
 	mock.Mock
 }
 
-func (m *RedisServiceMock) ScanKeys(ctx context.Context, options adapter.ScanOptions) <-chan string {
-	args := m.Called(ctx, options)
-	return args.Get(0).(chan string)
+func (m *RedisServiceMock) ScanKeys(ctx context.Context, options adapter.ScanOptions, resultChan chan adapter.ShardScanUpdate) {
+	m.Called(ctx, options, resultChan)
+	resultChan <- adapter.ShardScanUpdate{
+		ShardIp:     "",
+		Key:         "",
+		MemoryUsage: 0,
+	}
 }
 
 func (m *RedisServiceMock) GetKeysCount(ctx context.Context) (int64, error) {
@@ -35,15 +40,38 @@ func (m *RedisServiceMock) GetMemoryUsage(ctx context.Context, key string) (int6
 	return int64(args.Int(0)), args.Error(1)
 }
 
+func (m *RedisServiceMock) GetTotalShards(ctx context.Context) (int64, error) {
+	args := m.Called(ctx)
+	return int64(args.Int(0)), args.Error(1)
+}
+
+func (s *RedisServiceMock) GetCurrentNodeIp() string {
+	args := s.Called()
+	return args.String(0)
+}
+
+func (s *RedisServiceMock) ScanAllShards(ctx context.Context, options adapter.ScanOptions, resultChan chan adapter.ShardScanUpdate) chan adapter.ShardInit {
+	args := s.Called(ctx, options, resultChan)
+	return args.Get(0).(chan adapter.ShardInit)
+}
+
 type ProgressWriterMock struct {
 	mock.Mock
 }
 
-func (m *ProgressWriterMock) Start(total int64) {
-	m.Called(total)
+func (m *ProgressWriterMock) Start() {
+	m.Called()
 }
 
-func (m *ProgressWriterMock) Increment() {
+func (m *ProgressWriterMock) AddTracker(id string, total int64) {
+	m.Called()
+}
+
+func (m *ProgressWriterMock) Increment(id string, incrementBy int64) {
+	m.Called()
+}
+
+func (m *ProgressWriterMock) SetNumTrackersExpected(numTrackers int) {
 	m.Called()
 }
 

@@ -2,9 +2,9 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/obukhov/redis-inventory/src/logger"
-	"github.com/obukhov/redis-inventory/src/renderer"
-	"github.com/obukhov/redis-inventory/src/trie"
+	"github.com/Perseus/redis-inventory/src/logger"
+	"github.com/Perseus/redis-inventory/src/renderer"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/spf13/cobra"
 	"os"
 )

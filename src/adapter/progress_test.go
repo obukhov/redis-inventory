@@ -2,11 +2,12 @@ package adapter
 
 import (
 	"bytes"
+	"testing"
+	"time"
+
 	"github.com/jedib0t/go-pretty/v6/progress"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"testing"
-	"time"
 )
 
 type ProgressWriterTestSuite struct {
@@ -16,8 +17,8 @@ type ProgressWriterTestSuite struct {
 func (suite ProgressWriterTestSuite) TestStart() {
 	pwMock := &ProgressMock{}
 	prettyProgressWriter := &PrettyProgressWriter{
-		pw:      pwMock,
-		tracker: nil,
+		pw:       pwMock,
+		trackers: nil,
 	}
 
 	pwMock.On("AppendTracker", mock.Anything).Once().Run(func(args mock.Arguments) {
@@ -29,7 +30,7 @@ func (suite ProgressWriterTestSuite) TestStart() {
 
 	pwMock.On("Render").Once()
 
-	prettyProgressWriter.Start(42)
+	prettyProgressWriter.Start()
 
 	time.Sleep(time.Millisecond)
 	pwMock.AssertExpectations(suite.T())
@@ -39,8 +40,8 @@ func (suite ProgressWriterTestSuite) TestStop() {
 	pwMock := &ProgressMock{}
 	trackerMock := &TrackerMock{}
 	prettyProgressWriter := &PrettyProgressWriter{
-		pw:      pwMock,
-		tracker: trackerMock,
+		pw:       pwMock,
+		trackers: map[string]Tracker{"1": trackerMock},
 	}
 
 	pwMock.On("Stop").Once()
@@ -57,13 +58,13 @@ func (suite ProgressWriterTestSuite) TestIncrement() {
 	trackerMock := &TrackerMock{}
 
 	prettyProgressWriter := &PrettyProgressWriter{
-		pw:      pwMock,
-		tracker: trackerMock,
+		pw:       pwMock,
+		trackers: map[string]Tracker{"1": trackerMock},
 	}
 
 	trackerMock.On("Increment", int64(1)).Once()
 
-	prettyProgressWriter.Increment()
+	prettyProgressWriter.Increment("1", 1)
 
 	pwMock.AssertExpectations(suite.T())
 	trackerMock.AssertExpectations(suite.T())
@@ -92,8 +93,8 @@ func (suite ProgressWriterTestSuite) TestInit() {
 	pwMock.On("Style").Return(&style)
 
 	prettyProgressWriter := &PrettyProgressWriter{
-		pw:      pwMock,
-		tracker: nil,
+		pw:       pwMock,
+		trackers: nil,
 	}
 
 	prettyProgressWriter.init(&buf)

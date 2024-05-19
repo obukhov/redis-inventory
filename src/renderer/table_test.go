@@ -3,7 +3,7 @@ package renderer
 import (
 	"bytes"
 	"fmt"
-	"github.com/obukhov/redis-inventory/src/trie"
+	"github.com/Perseus/redis-inventory/src/trie"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
