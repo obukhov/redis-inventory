@@ -20,6 +20,7 @@ redis-inventory index redis://[:<password>@]<host>:<port>[/<dbIndex>] [flags]
   -c, --scanCount int       Number of keys to be scanned in one iteration (argument of scan command) (default 1000)
   -s, --separators string   Symbols that logically separate levels of the key (default ":")
   -t, --throttle int        Throttle: number of nanoseconds to sleep between keys
+      --tls                 Use TLS connection
 ```
 
 ### SEE ALSO

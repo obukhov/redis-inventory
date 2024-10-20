@@ -1,8 +1,6 @@
 package app
 
 import (
-	"context"
-	"github.com/mediocregopher/radix/v4"
 	"github.com/obukhov/redis-inventory/src/adapter"
 	"github.com/obukhov/redis-inventory/src/logger"
 	"github.com/obukhov/redis-inventory/src/renderer"
@@ -21,7 +19,7 @@ var indexCmd = &cobra.Command{
 		consoleLogger := logger.NewConsoleLogger(logLevel)
 		consoleLogger.Info().Msg("Start indexing")
 
-		clientSource, err := (radix.PoolConfig{}).New(context.Background(), "tcp", args[0])
+		clientSource, err := newPool(args[0])
 		if err != nil {
 			consoleLogger.Fatal().Err(err).Msg("Can't create redis client")
 		}
@@ -67,4 +65,5 @@ func init() {
 	indexCmd.Flags().StringVarP(&pattern, "pattern", "k", "*", "Glob pattern limiting the keys to be aggregated")
 	indexCmd.Flags().IntVarP(&scanCount, "scanCount", "c", 1000, "Number of keys to be scanned in one iteration (argument of scan command)")
 	indexCmd.Flags().IntVarP(&throttleNs, "throttle", "t", 0, "Throttle: number of nanoseconds to sleep between keys")
+	indexCmd.Flags().BoolVar(&isTLS, "tls", false, "Use TLS connection")
 }
